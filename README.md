@@ -68,6 +68,8 @@ By default, this will run the frontend on http://localhost:3000.
 3. **Deleting a Quest by ID:** Click the delete button next to a quest to remove it based on it's ID.
 4. **Sorting by ID** Use the sort button to reorder quests based on their ID.
 
+![DPU](https://cdn.discordapp.com/attachments/1171401595800518726/1300844967379472476/Screenshot_2024-10-29_at_16.32.47.png?ex=672251c8&is=67210048&hm=9ba17bfc06ade8d1b0f3fce6ec017574543eb8ef11090e2050a46288ab56c45e&)
+
 ### API Endpoints
 - **GET /api/index:** Retrieve all quests
 - **POST /api/index:** Add a new quest.
