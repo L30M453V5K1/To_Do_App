@@ -14,13 +14,12 @@
 
 ---
 
-## Features
+<!-- ## Features
 - **Create Quest**: Add a new quest/task.
 - **Retrieve Quests**: View all quests stored in the database.
 - **Update Quest**: Edit details of an existing quest.
 - **Delete Quest**: Remove a quest from the list.
-- **Sort Quests by ID**: Sort the quests in ascending or descending order based on their ID.
-
+- **Sort Quests by ID**: Sort the quests in ascending or descending order based on their ID. -->
 ## Tech Stack
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **Backend**: Java, Spring Boot
