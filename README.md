@@ -11,8 +11,6 @@
   - [Connecting Frontend and Backend](#connecting-frontend-and-backend)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [License](#license)
-- [Additional Suggestions](#additional-suggestions)
 
 ---
 
