@@ -64,10 +64,9 @@ By default, this will run the frontend on http://localhost:3000.
 
 ### Usage
 1. **Creating a Quest:** Use the form on the frontend to add a new quest.
-2. **Viewing Quests:** All quests are displayed dynamically when the HTML page is fully loaded.
-3. **Updating a Quest:** Click on the edit button near a quest to edit its description.
-4. **Deleting a Quest by ID:** Click the delete button next to a quest to remove it based on it's ID.
-5. **Sorting by ID** Use the sort button to reorder quests based on their ID.
+2. **Updating a Quest:** Click on the edit button near a quest to edit its description.
+3. **Deleting a Quest by ID:** Click the delete button next to a quest to remove it based on it's ID.
+4. **Sorting by ID** Use the sort button to reorder quests based on their ID.
 
 ### API Endpoints
 - **GET /api/index:** Retrieve all quests
