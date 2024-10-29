@@ -3,7 +3,6 @@
 **QuestBoard** is a simple, user-friendly To-Do application that allows users to manage their tasks (referred to as "quests") through basic CRUD operations: creating, retrieving, updating, and deleting tasks. The app also includes functionality to sort tasks based on their ID.
 
 ## Table of Contents
-- [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
   - [Backend Setup](#backend-setup)
