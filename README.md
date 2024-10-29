@@ -24,14 +24,13 @@
 ## Tech Stack
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **Backend**: Java, Spring Boot
-- **Database**: H2 (in-memory for development, configurable for production)
 
 ## Installation
 
 ### Prerequisites
 - **Java** (version 11 or later)
 - **Maven** (for managing Java dependencies)
-- **Node.js** (optional if you wish to run a local server for frontend)
+- **Node.js** (for local server on the frontend)
 
 ### Backend Setup
 1. Clone the repository:
