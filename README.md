@@ -52,8 +52,9 @@
     ```
 2. Install the dependencies if any, and run the frontend server with Node.js:
     ```cmd
-    npm install
-    npm start
+    npm init -y
+    npm install express
+    node app.js
     ```
 By default, this will run the frontend on http://localhost:3000.
 
