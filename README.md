@@ -72,7 +72,7 @@ By default, this will run the frontend on http://localhost:3000.
 
 ### Use Case Diagram
 
-![DPU](https://cdn.discordapp.com/attachments/1171401595800518726/1300844967379472476/Screenshot_2024-10-29_at_16.32.47.png?ex=672251c8&is=67210048&hm=9ba17bfc06ade8d1b0f3fce6ec017574543eb8ef11090e2050a46288ab56c45e&)
+![DPU](C:\Users\Administrator\Desktop\FERI\3 semester\RIS\DPU\Screenshot 2024-11-05 135401.png)
 
 ## API Endpoints
 - **GET /api/index:** Retrieve all quests
