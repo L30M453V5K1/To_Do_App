@@ -86,11 +86,14 @@ Cilj aplikacije To-Do je zagotoviti enostaven, uporabniku prijazen vmesnik za up
 Aplikacija To-Do je zgrajena tako, da izpolnjuje bistvene potrebe po upravljanju opravil s čisto in učinkovito zasnovo, ki uporabnika ohranja osredotočenega na dokončanje nalog.
 
 ## Besednjak
-- **Aplikacija To-Do:** orodje za upravljanje in organiziranje opravil.
-- **Naloga:** predmet ali dejavnost, ki jo uporabnik želi dokončati ali si jo zapomniti.
-- **Vnosno polje:** element obrazca, kamor uporabniki vnesejo ime nove naloge.
-- **Mreža:** postavitev, kjer so opravila prikazana, ko so dodana.
-- **Funkcionalnost razvrščanja:** funkcija, ki uporabnikom omogoča razvrščanje opravil v naraščajočem ali padajočem vrstnem redu glede na imena opravil.
-- **Posodobitev opravila:** možnost spreminjanja imena ali podrobnosti obstoječega opravila.
-- **Brisanje opravila:** možnost odstranitve opravila iz mreže in seznama aktivnih opravil.
-- **Naraščajoče/padajoče:** vrstni red razvrščanja; naraščajoče pomeni od A do Ž (abecedni vrstni red) ali od zgodnjega do najzgodnejšega, padajoče pa je od Z do A ali od najnovejšega do najzgodnejšega.
+
+| Pojem                  | Definicija |
+|------------------------|------------|
+| **Aplikacija To-Do**   | Orodje za upravljanje in organiziranje opravil. |
+| **Naloga**             | Predmet ali dejavnost, ki jo uporabnik želi dokončati ali si jo zapomniti. |
+| **Vnosno polje**       | Element obrazca, kamor uporabniki vnesejo ime nove naloge. |
+| **Mreža**              | Postavitev, kjer so opravila prikazana, ko so dodana. |
+| **Funkcionalnost razvrščanja** | Funkcija, ki uporabnikom omogoča razvrščanje opravil v naraščajočem ali padajočem vrstnem redu glede na imena opravil. |
+| **Posodobitev opravila** | Možnost spreminjanja imena ali podrobnosti obstoječega opravila. |
+| **Brisanje opravila**  | Možnost odstranitve opravila iz mreže in seznama aktivnih opravil. |
+| **Naraščajoče/padajoče** | Vrstni red razvrščanja; naraščajoče pomeni od A do Ž (abecedni vrstni red) ali od zgodnjega do najzgodnejšega, padajoče pa je od Z do A ali od najnovejšega do najzgodnejšega. |
