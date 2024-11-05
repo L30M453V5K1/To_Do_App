@@ -74,3 +74,23 @@ By default, this will run the frontend on http://localhost:3000.
 - **POST /api/index:** Add a new quest.
 - **PUT /api/index/{id}:** Update an existing quest.
 - **DELETE /api/index/{id}:** Delete a quest by ID.
+
+## Vizija
+Cilj aplikacije To-Do je zagotoviti enostaven, uporabniku prijazen vmesnik za upravljanje opravil, ki se osredotoča na preprostost in osnovno funkcionalnost. Ta aplikacija uporabnikom omogoča učinkovito organiziranje, določanje prioritet in upravljanje svojih vsakodnevnih nalog brez zapletenosti nepotrebnih funkcij.
+
+### Glavni cilji aplikacije so:
+- **Omogoči hitro ustvarjanje nalog in sledenje:** uporabniki lahko preprosto dodajo naloge, ki so prikazane v organizirani mreži.
+- **Omogočite posodabljanje, brisanje in razvrščanje nalog:** uporabniki lahko po potrebi spremenijo ali izbrišejo naloge in si jih ogledajo v naraščajočem ali padajočem vrstnem redu, da ustrezajo njihovim prednostnim nalogam.
+- **Zagotovite brezhibno uporabniško izkušnjo:** minimalistična zasnova aplikacije zmanjša motnje in poveča uporabnost za učinkovito upravljanje opravil.
+
+Aplikacija To-Do je zgrajena tako, da izpolnjuje bistvene potrebe po upravljanju opravil s čisto in učinkovito zasnovo, ki uporabnika ohranja osredotočenega na dokončanje nalog.
+
+## Besednjak
+- **Aplikacija To-Do:** orodje za upravljanje in organiziranje opravil.
+- **Naloga:** predmet ali dejavnost, ki jo uporabnik želi dokončati ali si jo zapomniti.
+- **Vnosno polje:** element obrazca, kamor uporabniki vnesejo ime nove naloge.
+- **Mreža:** postavitev, kjer so opravila prikazana, ko so dodana.
+- **Funkcionalnost razvrščanja:** funkcija, ki uporabnikom omogoča razvrščanje opravil v naraščajočem ali padajočem vrstnem redu glede na imena opravil.
+- **Posodobitev opravila:** možnost spreminjanja imena ali podrobnosti obstoječega opravila.
+- **Brisanje opravila:** možnost odstranitve opravila iz mreže in seznama aktivnih opravil.
+- **Naraščajoče/padajoče:** vrstni red razvrščanja; naraščajoče pomeni od A do Ž (abecedni vrstni red) ali od zgodnjega do najzgodnejšega, padajoče pa je od Z do A ali od najnovejšega do najzgodnejšega.
