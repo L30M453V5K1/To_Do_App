@@ -3,22 +3,26 @@
 **QuestBoard** is a simple, user-friendly To-Do application that allows users to manage their tasks (referred to as "quests") through basic CRUD operations: creating, retrieving, updating, and deleting tasks. The app also includes functionality to sort tasks based on their ID.
 
 ## Table of Contents
+- [Vision of the project](#vision-of-the-project)
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
   - [Connecting Frontend and Backend](#connecting-frontend-and-backend)
 - [Usage](#usage)
+  - [Use Case Diagram](#use-case-diagram)
 - [API Endpoints](#api-endpoints)
+- [Glossary of the ky terms for QuestBoard](#glossary-of-the-key-terms-for-questboard)
 
 ---
 
-<!-- ## Features
-- **Create Quest**: Add a new quest/task.
-- **Retrieve Quests**: View all quests stored in the database.
-- **Update Quest**: Edit details of an existing quest.
-- **Delete Quest**: Remove a quest from the list.
-- **Sort Quests by ID**: Sort the quests in ascending or descending order based on their ID. -->
+## Vision of the project
+**QuestBoard** is a streamlined task management app designed to help individuals and teams organize their daily tasks with ease. Each task, or "quest," is displayed clearly with options to edit, delete, and sort, allowing users to stay on top of their priorities. With its simple interface and dynamic display, QuestBoard makes task management efficient and stress-free.
+
+**Purpose:** QuestBoard solves the problem of task overload by allowing users to create, track, and update tasks in real time. The app helps users stay organized, focused, and productive, whether they’re managing personal tasks or team projects.
+
+**Ideal Users:** Busy professionals, students, and anyone looking for a practical solution to manage their to-do list effectively.
+
 ## Tech Stack
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **Backend**: Java, Spring Boot
@@ -52,48 +56,49 @@
     ```
 2. Install the dependencies if any, and run the frontend server with Node.js:
     ```cmd
-    npm init -y
-    npm install express
-    node app.js
+    npm install
+    npm start
     ```
 By default, this will run the frontend on http://localhost:3000.
 
 ### Connecting Frontend and Backend
 - The frontend will make HTTP requests to the backend API running on http://localhost:8080 to perform CRUD operations. Ensure CORS is configured on the backend to allow requests from http://localhost:3000.
 
-### Usage
+## Usage
 1. **Creating a Quest:** Use the form on the frontend to add a new quest.
 2. **Updating a Quest:** Click on the edit button near a quest to edit its description.
 3. **Deleting a Quest by ID:** Click the delete button next to a quest to remove it based on it's ID.
 4. **Sorting by ID** Use the sort button to reorder quests based on their ID.
 
+### Use Case Diagram
+
 ![DPU](https://cdn.discordapp.com/attachments/1171401595800518726/1300844967379472476/Screenshot_2024-10-29_at_16.32.47.png?ex=672251c8&is=67210048&hm=9ba17bfc06ade8d1b0f3fce6ec017574543eb8ef11090e2050a46288ab56c45e&)
 
-### API Endpoints
+## API Endpoints
 - **GET /api/index:** Retrieve all quests
 - **POST /api/index:** Add a new quest.
 - **PUT /api/index/{id}:** Update an existing quest.
 - **DELETE /api/index/{id}:** Delete a quest by ID.
 
-## Vizija
-Cilj aplikacije To-Do je zagotoviti enostaven, uporabniku prijazen vmesnik za upravljanje opravil, ki se osredotoča na preprostost in osnovno funkcionalnost. Ta aplikacija uporabnikom omogoča učinkovito organiziranje, določanje prioritet in upravljanje svojih vsakodnevnih nalog brez zapletenosti nepotrebnih funkcij.
+## Glossary of the key terms for QuestBoard
+**CRUD:** Stands for Create, Read, Update, and Delete. These are the four basic functions for interacting with database records, enabling users to add, view, modify, and remove tasks (quests) in QuestBoard.
 
-### Glavni cilji aplikacije so:
-- **Omogoči hitro ustvarjanje nalog in sledenje:** uporabniki lahko preprosto dodajo naloge, ki so prikazane v organizirani mreži.
-- **Omogočite posodabljanje, brisanje in razvrščanje nalog:** uporabniki lahko po potrebi spremenijo ali izbrišejo naloge in si jih ogledajo v naraščajočem ali padajočem vrstnem redu, da ustrezajo njihovim prednostnim nalogam.
-- **Zagotovite brezhibno uporabniško izkušnjo:** minimalistična zasnova aplikacije zmanjša motnje in poveča uporabnost za učinkovito upravljanje opravil.
+**Quest:** A task or action item entered by the user, consisting of a description and a unique ID. Each quest represents a goal or task the user wants to manage within the app.
 
-Aplikacija To-Do je zgrajena tako, da izpolnjuje bistvene potrebe po upravljanju opravil s čisto in učinkovito zasnovo, ki uporabnika ohranja osredotočenega na dokončanje nalog.
+**ID:** A unique identifier assigned to each quest upon creation. IDs allow the app to manage, retrieve, update, and delete specific quests, ensuring no two quests are confused.
 
-## Besednjak
+**Database:** A structured data storage system used by QuestBoard to securely store and retrieve quests. Each quest, including its ID and description, is saved to the database, making it accessible even when the user refreshes the page.
 
-| Pojem                  | Definicija |
-|------------------------|------------|
-| **Aplikacija To-Do**   | Orodje za upravljanje in organiziranje opravil. |
-| **Naloga**             | Predmet ali dejavnost, ki jo uporabnik želi dokončati ali si jo zapomniti. |
-| **Vnosno polje**       | Element obrazca, kamor uporabniki vnesejo ime nove naloge. |
-| **Mreža**              | Postavitev, kjer so opravila prikazana, ko so dodana. |
-| **Funkcionalnost razvrščanja** | Funkcija, ki uporabnikom omogoča razvrščanje opravil v naraščajočem ali padajočem vrstnem redu glede na imena opravil. |
-| **Posodobitev opravila** | Možnost spreminjanja imena ali podrobnosti obstoječega opravila. |
-| **Brisanje opravila**  | Možnost odstranitve opravila iz mreže in seznama aktivnih opravil. |
-| **Naraščajoče/padajoče** | Vrstni red razvrščanja; naraščajoče pomeni od A do Ž (abecedni vrstni red) ali od zgodnjega do najzgodnejšega, padajoče pa je od Z do A ali od najnovejšega do najzgodnejšega. |
+**Dynamic Display:** A feature allowing quests to be immediately shown or updated on the browser without needing a page reload. This real-time updating enhances user interaction by reflecting changes instantly.
+
+**Sort Functionality:** An option that allows users to organize quests based on their ID in either ascending or descending order. This feature helps users prioritize tasks or locate specific quests more easily.
+
+**Backend:** The part of QuestBoard’s software that operates on the server side, built with Spring Boot. It manages the app’s core logic, database interactions, and provides data to the frontend.
+
+**Frontend:** The part of the application visible to the user, built with HTML, CSS, and JavaScript. It includes the input field, buttons, and quest display area, creating the interface through which users interact with their quests.
+
+**Spring Boot:** A framework used for building the backend of QuestBoard. It provides a streamlined way to develop a robust and scalable backend for managing quests.
+
+**Bootstrap:** A front-end toolkit used to style and layout QuestBoard’s interface. Bootstrap provides pre-built components and styles that help make the app responsive and visually appealing.
+
+**Button:** An interactive element in QuestBoard that allows users to create, update, or delete a quest. Buttons also enable sorting quests by ID, providing essential controls for managing tasks.
