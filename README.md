@@ -72,7 +72,7 @@ By default, this will run the frontend on http://localhost:3000.
 
 ### Use Case Diagram
 
-![DPU](C:\Users\Administrator\Desktop\FERI\3 semester\RIS\DPU\Screenshot 2024-11-05 135401.png)
+![UCD](UCD/Screenshot%202024-11-05%20135401.png)
 
 ## API Endpoints
 - **GET /api/index:** Retrieve all quests
