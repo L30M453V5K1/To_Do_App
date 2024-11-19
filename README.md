@@ -102,3 +102,6 @@ By default, this will run the frontend on http://localhost:3000.
 **Bootstrap:** A front-end toolkit used to style and layout QuestBoard’s interface. Bootstrap provides pre-built components and styles that help make the app responsive and visually appealing.
 
 **Button:** An interactive element in QuestBoard that allows users to create, update, or delete a quest. Buttons also enable sorting quests by ID, providing essential controls for managing tasks.
+
+![ris2 drawio](https://github.com/user-attachments/assets/8b778b06-9b31-4ea9-b210-25891e15fdf2)
+
