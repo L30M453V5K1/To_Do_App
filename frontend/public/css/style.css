@@ -29,3 +29,9 @@
     border-radius: 30%;
     background-color: hsl(0, 0%, 12%);
 }
+
+.form-check {
+    color: white !important;
+    margin-left: 26%;
+    margin-bottom: 20px;
+}
