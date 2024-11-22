@@ -105,3 +105,66 @@ By default, this will run the frontend on http://localhost:3000.
 
 ![ris2 drawio](https://github.com/user-attachments/assets/8b778b06-9b31-4ea9-b210-25891e15fdf2)
 
+# Task Management System - New Functionality
+
+## Overview
+In this version of the Task Management System, new functionalities have been implemented to allow users to:
+- Mark tasks as **Important**.
+- **Filter** tasks by importance.
+- **Sort** tasks by their ID in ascending or descending order.
+
+These new features enhance task management by allowing users to prioritize important tasks and view tasks in a flexible order.
+
+## New Functionalities Implemented
+
+### 1. Marking Tasks as Important
+- **Functionality**: Users can now mark tasks as "Important" when they create them.
+- **How It Works**:
+  - When creating a new task, the user can check a "Mark as Important" checkbox to designate the task as important.
+  - Once marked as important, the task will be displayed with an "Important" label in the UI to differentiate it from other tasks.
+  - This functionality is useful for prioritizing tasks that require immediate attention.
+  
+### 2. Filtering Tasks by Importance
+- **Functionality**: Users can now filter tasks to view only those marked as important.
+- **How It Works**:
+  - The user can click a "Filter Important Tasks" button to view only tasks that have been marked as important.
+  - The user can also click the "Show All Tasks" button to reset the filter and display all tasks, including both important and non-important ones.
+  
+## How the New Functionalities Work
+
+### Task Creation and Importance
+- When creating a task, the user will be prompted to enter a description.
+- The user can also check a checkbox labeled "Mark as Important" to designate the task as important.
+- Once the task is created, if marked as important, it will be displayed with an "Important" label on the task card.
+
+### Filtering Tasks
+- The user can filter tasks by importance using a dropdown button labeled "Filter Tasks".
+  - **Show All Tasks**: Displays all tasks in the current sort order.
+  - **Important Tasks**: Filters the tasks to display only those marked as important.
+
+## How the User Can Test the New Functionality
+
+### Task Creation and Importance
+1. **Create a New Task**:
+   - In the "New Task" input field, type a description for the task.
+   - Check the "Mark as Important" checkbox if you want to mark this task as important.
+   - Click the "New Task" button to create the task.
+   
+2. **Check the Task List**:
+   - After creating the task, it should appear in the list of tasks.
+   - If marked as important, the task will be displayed with the "Important" label.
+
+### Filtering Tasks by Importance
+1. **Filter Tasks**:
+   - Click on the "Filter Tasks" dropdown in the UI.
+   - Select **"Important Tasks"** to only view tasks that are marked as important.
+   - Click **"Show All Tasks"** to reset the filter and view all tasks.
+   
+2. **Verify the Filtering**:
+   - When filtering for important tasks, only tasks marked as important should appear. When showing all tasks, all tasks should be displayed, including both important and non-important ones.
+
+---
+
+
+
+
