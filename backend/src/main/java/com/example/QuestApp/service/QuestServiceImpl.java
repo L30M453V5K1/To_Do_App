@@ -5,8 +5,10 @@ import com.example.QuestApp.repository.QuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestServiceImpl implements QuestService {
@@ -15,17 +17,27 @@ public class QuestServiceImpl implements QuestService {
     private QuestRepository questRepository;
 
     @Override
-    public List<Quest> getAllQuests(String sort) {
-        List<Quest> quests = (List<Quest>) questRepository.findAll();
+    public List<Quest> getAllQuests(String sort, boolean importantFilter) {
+        // Convert the immutable list to a mutable list
+        List<Quest> quests = new ArrayList<>((List<Quest>) questRepository.findAll());
 
-        // Sort quests based on the sort parameter
+        // Apply the filter if needed
+        if (importantFilter) {
+            quests = quests.stream()
+                    .filter(Quest::isImportant) // Filter only important quests
+                    .collect(Collectors.toList());
+        }
+
+        // Sort the quests by ID (ascending or descending)
         if ("desc".equalsIgnoreCase(sort)) {
             quests.sort(Comparator.comparing(Quest::getId).reversed());
         } else {
             quests.sort(Comparator.comparing(Quest::getId));
         }
+
         return quests;
     }
+
 
     @Override
     public Quest createQuest(Quest quest) {

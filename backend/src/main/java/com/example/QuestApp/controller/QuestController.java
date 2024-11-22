@@ -19,10 +19,13 @@ public class QuestController {
         return new ApiResponse("Congratulations! Your app is working!");
     }
 
-    @GetMapping("/api/index") //get and delete method doesn't have @RequestBody
-    public List<Quest> getAllQuests(@RequestParam(required = false, defaultValue = "asc") String sort) {
-        return questService.getAllQuests(sort); // Pass the sort parameter to the service
+    @GetMapping("/api/index")
+    public List<Quest> getAllQuests(
+            @RequestParam(required = false, defaultValue = "asc") String sort,
+            @RequestParam(required = false, defaultValue = "false") boolean importantFilter) {
+        return questService.getAllQuests(sort, importantFilter);
     }
+
 
     @PostMapping("/api/index")
     public Quest addQuest(@RequestBody Quest quest) { //post method has @RequestBody

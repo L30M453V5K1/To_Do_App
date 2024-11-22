@@ -17,4 +17,7 @@ public class Quest {
 
     @Column
     private String description;
+
+    @Column(nullable = false)
+    private boolean important; // New field
 }

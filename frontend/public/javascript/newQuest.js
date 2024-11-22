@@ -1,6 +1,7 @@
 document.getElementById('new-quest-btn').addEventListener('click', function () {
     // Get the value from the input field
     const questDescription = document.querySelector('input[aria-label="new-quest"]').value;
+    const isImportant = document.getElementById('important-check').checked; // Check if the task is marked as important
 
     // Check if the input is empty
     if (questDescription.trim() === '') {
@@ -10,14 +11,15 @@ document.getElementById('new-quest-btn').addEventListener('click', function () {
 
     // Create the quest object to send in the request
     const newQuest = {
-        description: questDescription
+        description: questDescription,
+        important: isImportant  // Send the important flag to the backend
     };
 
     // Send a POST request to the backend
     fetch('http://localhost:8080/api/index', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',  // Indicate that we are sending JSON data
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(newQuest),  // Convert the quest object to a JSON string
     })
@@ -38,4 +40,5 @@ document.getElementById('new-quest-btn').addEventListener('click', function () {
 
     // Clear the input field after submission
     document.querySelector('input[aria-label="new-quest"]').value = '';
+    document.getElementById('important-check').checked = false;  // Reset the important checkbox
 });
