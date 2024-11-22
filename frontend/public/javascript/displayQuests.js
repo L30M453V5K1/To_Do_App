@@ -39,39 +39,39 @@ function getQuests() {
             let totalColumnsInCurrentRow = 0;
             let currentRow;
 
-            quests.forEach(quest => {
+            quests.forEach((quest, index) => {
+                // Calculate display ID based on sort order
+                const displayId = isDescending ? quests.length - index : index + 1;
+            
                 // Create quest column
                 const questColumn = document.createElement("div");
                 questColumn.className = "col-sm-12 col-md-6 col-lg-3";
-
+            
                 // Create quest container
                 const questContainer = document.createElement("div");
                 questContainer.className = "container-fluid quest-container";
-                questContainer.setAttribute("data-id", quest.id); // Store quest ID in the container for easy access
-
+                questContainer.setAttribute("data-id", quest.id); // Keep the actual database ID for internal use
+            
                 const questDesc = document.createElement("div");
                 questDesc.className = "quest-desc fs-6";
-                questDesc.innerHTML = `${quest.id}. ${quest.description}`;
-
+                questDesc.innerHTML = `${displayId}. ${quest.description}`; // Use dynamic displayId
+            
                 const editDeleteContainer = document.createElement("div");
                 editDeleteContainer.className = "d-flex justify-content-end";
-
+            
                 // Create edit button
                 const editQuestButton = document.createElement("button");
                 editQuestButton.className = "btn btn-outline-warning edit-btn";
                 editQuestButton.innerHTML = "Edit Quest";
-
-                // Attach edit functionality from editQuest.js
+            
+                // Attach edit functionality
                 editQuestButton.addEventListener('click', function () {
-                    // Prompt the user for a new description
                     const newDescription = prompt("Enter the new description for the quest:", quest.description);
-
-                    // If a valid description is provided, call editQuest with id and new description
                     if (newDescription && newDescription.trim() !== "") {
-                        editQuest(quest.id, newDescription.trim()); // Pass the new description along with the id
+                        editQuest(quest.id, newDescription.trim()); // Use database ID for backend update
                     }
                 });
-
+            
                 // Create delete button
                 const deleteQuestButton = document.createElement("button");
                 deleteQuestButton.className = "delete-btn";
@@ -79,26 +79,26 @@ function getQuests() {
                 redCross.src = "/images/9c6cd7076c9be69e66174619f8f63e3d.png";
                 redCross.className = "red-cross";
                 deleteQuestButton.appendChild(redCross);
-
+            
                 // Attach delete functionality
                 deleteQuestButton.addEventListener('click', function () {
-                    deleteQuest(quest.id, questContainer);
+                    deleteQuest(quest.id, questContainer); // Use database ID for backend deletion
                 });
-
+            
                 // Append buttons to the editDeleteContainer
                 editDeleteContainer.appendChild(editQuestButton);
                 editDeleteContainer.appendChild(deleteQuestButton);
-
+            
                 // Append ID, description, and buttons to the quest container
                 questContainer.appendChild(questDesc);
                 questContainer.appendChild(editDeleteContainer);
-
+            
                 // Append the quest container to the quest column
                 questColumn.appendChild(questContainer);
-
-                // Logic for rows and columns (bootstrap 12-column system)
-                const columnsAdded = 3; // Bootstrap large screens: 3 columns for each quest
-
+            
+                // Add logic for rows and columns (bootstrap 12-column system)
+                const columnsAdded = 3;
+            
                 if (!currentRow || totalColumnsInCurrentRow + columnsAdded > 12) {
                     // Create a new row if needed
                     const newRow = document.createElement("div");
@@ -107,10 +107,10 @@ function getQuests() {
                     currentRow = newRow;
                     totalColumnsInCurrentRow = 0;
                 }
-
+            
                 // Append the quest column to the current row
                 currentRow.appendChild(questColumn);
-
+            
                 // Update the total number of columns in the current row
                 totalColumnsInCurrentRow += columnsAdded;
             });
