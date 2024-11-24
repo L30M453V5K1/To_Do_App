@@ -17,7 +17,7 @@ public class QuestServiceImpl implements QuestService {
     private QuestRepository questRepository;
 
     @Override
-    public List<Quest> getAllQuests(String sort, boolean importantFilter) {
+    public List<Quest> getAllQuests(String sort, boolean importantFilter, String search) {
         // Convert the immutable list to a mutable list
         List<Quest> quests = new ArrayList<>((List<Quest>) questRepository.findAll());
 
@@ -25,6 +25,13 @@ public class QuestServiceImpl implements QuestService {
         if (importantFilter) {
             quests = quests.stream()
                     .filter(Quest::isImportant) // Filter only important quests
+                    .collect(Collectors.toList());
+        }
+
+        // Apply search if needed (matching description)
+        if (search != null && !search.isEmpty()) {
+            quests = quests.stream()
+                    .filter(quest -> quest.getDescription().toLowerCase().contains(search.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
@@ -37,7 +44,6 @@ public class QuestServiceImpl implements QuestService {
 
         return quests;
     }
-
 
     @Override
     public Quest createQuest(Quest quest) {

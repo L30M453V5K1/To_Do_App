@@ -22,8 +22,9 @@ public class QuestController {
     @GetMapping("/api/index")
     public List<Quest> getAllQuests(
             @RequestParam(required = false, defaultValue = "asc") String sort,
-            @RequestParam(required = false, defaultValue = "false") boolean importantFilter) {
-        return questService.getAllQuests(sort, importantFilter);
+            @RequestParam(required = false, defaultValue = "false") boolean importantFilter,
+            @RequestParam(required = false, defaultValue = "") String search) {
+        return questService.getAllQuests(sort, importantFilter, search);
     }
 
 
@@ -42,5 +43,4 @@ public class QuestController {
         questService.deleteQuest(id);
         return new ApiResponse("Successfully deleted quest with id: "+id);
     }
-
 }

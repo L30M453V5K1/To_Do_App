@@ -16,11 +16,11 @@ function setSortingPreference(isDescending) {
 let isDescending = getSortingPreference(); // Initialize with the saved preference
 
 // Function to fetch quests from the server
-function getQuests(importantFilter) {
+function getQuests(importantFilter, searchQuery = '') {
     const sortParam = isDescending ? 'desc' : 'asc';
 
-    // Construct the URL with the sorting and filtering parameters
-    fetch(`http://localhost:8080/api/index?sort=${sortParam}&importantFilter=${importantFilter}`) // Pass sort and filter parameters
+    // Construct the URL with the sorting, filtering, and search query parameters
+    fetch(`http://localhost:8080/api/index?sort=${sortParam}&importantFilter=${importantFilter}&search=${encodeURIComponent(searchQuery)}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -155,6 +155,16 @@ document.getElementById("filter-all").addEventListener("click", () => {
 
 document.getElementById("filter-important").addEventListener("click", () => {
     getQuests(true); // Fetch only important tasks
+});
+
+document.getElementById("show-all-btn").addEventListener("click", () => {
+    getQuests(false, searchQuery); // Fetch only important tasks
+});
+
+
+document.getElementById("search-quest-btn").addEventListener('click', function() {
+    const searchQuery = document.getElementById('search-input').value.trim();
+    getQuests(false, searchQuery); // Fetch quests with the search query
 });
 
 // Load quests when the page is ready
