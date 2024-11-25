@@ -10,7 +10,7 @@
     <script src="/javascript/newQuest.js" defer></script>
     <title>QuestBoard</title>
 </head>
-<body class="bg-dark">
+<body class="bg-dark" data-bs-theme="dark">
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/html/index.html">
@@ -20,59 +20,85 @@
         </div>
     </nav>
     <main class="container-fluid">
-        <div class="container" id="button-containr">
-            <div class="row d-flex gap-2 justify-content-center align-items-center" data-bs-theme="dark">
-                <div class="col col-sm-4 col-md-3 justify-content-center">
-                    <input class="form-control me-2" id="new-quest-input" placeholder="New Quest" aria-label="new-quest">
+        <div class="container my-4">
+            <!-- First Row -->
+            <div id="first-row" class="row align-items-center justify-content-between mb-3">
+                <!-- Left Side: New Quest Input, Button, and Checkbox -->
+                <div class="col d-flex align-items-center gap-2">
+                    <input class="form-control form-control-sm" style="width: 200px;" id="new-quest-input" placeholder="New Quest" aria-label="new-quest">
+                    <button class="btn btn-outline-warning btn-sm" style="width: 100px;" id="new-quest-btn" type="button">New Quest</button>
+                    <div class="form-check ms-2 d-flex align-items-center">
+                        <input class="form-check-input me-2" type="checkbox" id="important-check">
+                        <label class="form-check-label" for="important-check">Mark as Important</label>
+                    </div>
                 </div>
-                <div class="col col-sm-4 col-md-3 justify-content-center">
-                    <button class="btn btn-outline-warning body-btn" id="new-quest-btn" type="button">New Quest</button>
-                </div>
-                
-                <div class="col col-sm-4 col-md-3 justify-content-center">
+                <!-- Right Side: Sort and Filter Dropdowns -->
+                <div class="col-auto d-flex gap-2">
                     <div class="dropdown">
-                        <button class="btn btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-warning btn-sm" style="width: 120px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Sort Quests
                         </button>
                         <ul class="dropdown-menu">
-                          <li><button class="dropdown-item" id="sort-ascending">Sort ascending ID</button></li>
-                          <li><button class="dropdown-item" id="sort-descending">Sort descending ID</button></li>
+                            <li><button class="dropdown-item" id="sort-ascending">Sort ascending ID</button></li>
+                            <li><button class="dropdown-item" id="sort-descending">Sort descending ID</button></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-warning btn-sm" style="width: 120px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Filter Tasks
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item" id="filter-all">All Tasks</button></li>
+                            <li><button class="dropdown-item" id="filter-important">Important Tasks</button></li>
                         </ul>
                     </div>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="important-check">
-                    <label class="form-check-label" for="important-check">
-                        Mark as Important
-                    </label>
-                </div>                
-                <div class="dropdown" id="filter">
-                    <button class="btn btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Filter Tasks
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><button class="dropdown-item" id="filter-all">All Tasks</button></li>
-                        <li><button class="dropdown-item" id="filter-important">Important Tasks</button></li>
-                    </ul>
+            </div>
+            <!-- Second Row -->
+            <div id="second-row" class="row align-items-center justify-content-between">
+                <!-- Left Side: Search Input and Button -->
+                <div class="col d-flex align-items-center gap-2">
+                    <input type="text" id="search-input" class="form-control form-control-sm" style="width: 200px;" placeholder="Search quests...">
+                    <button class="btn btn-outline-warning btn-sm" style="width: 100px;" id="search-quest-btn" type="button">Search</button>
                 </div>
-
-                <div class="col col-sm-4 col-md-3 justify-content-center">
-                    <input type="text" id="search-input" class="form-control" placeholder="Search quests..." />
+                <!-- Right Side: Show All Button -->
+                <div class="col-auto">
+                    <button class="btn btn-outline-warning btn-sm" style="width: 100px;" id="show-all-btn" type="button">Show All</button>
                 </div>
-                <div class="col col-sm-4 col-md-3 justify-content-center">
-                    <button class="btn btn-outline-warning body-btn" id="search-quest-btn" type="button">Search</button>
-                </div>
-                <div class="col col-sm-4 col-md-3 justify-content-center">
-                    <!-- Show All button -->
-                    <button class="btn btn-outline-warning body-btn" id="show-all-btn" type="button">Show All</button>
-                </div>                             
             </div>
         </div>
-        <div class="container" id="quest-container">
+        <!-- Quest Container -->
+        <div class="container mt-4" id="quest-container">
             <div class="row justify-content-evenly" id="row-1"></div>
         </div>
     </main>
-
+    <!-- Edit Quest Modal -->
+    <div class="modal fade" id="editQuestModal" tabindex="-1" aria-labelledby="editQuestModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editQuestModalLabel">Edit Quest</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editQuestForm">
+                        <div class="mb-3">
+                            <label for="editQuestDescription" class="form-label">New Description</label>
+                            <input type="text" class="form-control" id="editQuestDescription" placeholder="Enter new description">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editQuestImportant">
+                            <label class="form-check-label" for="editQuestImportant">Mark as Important</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="applyEditQuest">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <footer class="text-center text-lg-start bg-dark border-top border-body" data-bs-theme="dark">
         <div class="text-center text-white p-3 bg-dark">
             © 2024 Copyright:

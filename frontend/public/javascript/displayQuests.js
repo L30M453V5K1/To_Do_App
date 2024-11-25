@@ -72,14 +72,70 @@ function getQuests(importantFilter, searchQuery = '') {
                 editQuestButton.className = "btn btn-outline-warning edit-btn";
                 editQuestButton.innerHTML = "Edit Quest";
 
-                // Attach edit functionality
+                // Attach edit functionality to each quest's "Edit" button
                 editQuestButton.addEventListener('click', function () {
-                    const newDescription = prompt("Enter the new description for the quest:", quest.description);
-                    if (newDescription && newDescription.trim() !== "") {
-                        editQuest(quest.id, newDescription.trim()); // Use database ID for backend update
-                    }
-                });
+                    console.log('Editing quest:', quest);
 
+                    // Pre-fill modal fields
+                    document.getElementById('editQuestDescription').value = quest.description;
+                    document.getElementById('editQuestImportant').checked = quest.important;
+
+                    // Show the modal
+                    const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
+                    editQuestModal.show();
+
+                    // Apply changes
+                    document.getElementById('applyEditQuest').onclick = function () {
+                        const newDescription = document.getElementById('editQuestDescription').value.trim();
+                        const isImportant = document.getElementById('editQuestImportant').checked;
+
+                        if (newDescription === '') {
+                            alert('Description cannot be empty.');
+                            return;
+                        }
+
+                        console.log('Applying changes:', { id: quest.id, newDescription, isImportant });
+
+                        // Call the editQuest function
+                        editQuest(quest.id, newDescription, isImportant)
+                            .then((updatedQuest) => {
+                                console.log('Server response:', updatedQuest);
+                        
+                                // Locate the quest description element
+                                const questDesc = document.querySelector(`.quest-container[data-id='${updatedQuest.id}'] .quest-desc`);
+                        
+                                if (!questDesc) {
+                                    console.error(`Failed to locate quest description for ID: ${updatedQuest.id}`);
+                                    alert('Failed to update the UI. Please refresh the page to see the changes.');
+                                    return;
+                                }
+                        
+                                // Update the description
+                                questDesc.innerHTML = `${updatedQuest.id}. ${updatedQuest.description}`;
+                        
+                                // Update the "Important" badge
+                                const importantBadge = questDesc.querySelector('.badge.bg-warning');
+                                if (updatedQuest.important) {
+                                    if (!importantBadge) {
+                                        const badge = document.createElement('span');
+                                        badge.className = 'badge bg-warning text-dark ms-2';
+                                        badge.innerText = 'Important';
+                                        questDesc.appendChild(badge);
+                                    }
+                                } else {
+                                    if (importantBadge) importantBadge.remove();
+                                }
+                        
+                                alert('Quest updated successfully!');
+                                editQuestModal.hide(); // Close the modal
+                            })
+                            .catch((error) => {
+                                console.error('Failed to update quest:', error);
+                                alert('Failed to update the quest. Please try again.');
+                        });
+                    };
+                });
+                            
                 // Create delete button
                 const deleteQuestButton = document.createElement("button");
                 deleteQuestButton.className = "delete-btn";

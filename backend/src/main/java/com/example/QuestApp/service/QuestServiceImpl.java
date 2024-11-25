@@ -3,6 +3,7 @@ package com.example.QuestApp.service;
 import com.example.QuestApp.model.Quest;
 import com.example.QuestApp.repository.QuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -54,8 +55,8 @@ public class QuestServiceImpl implements QuestService {
     public Quest updateQuest(int id, Quest newQuest) throws Exception {
         Quest quest = questRepository.findById(id).orElseThrow(() -> new Exception("Quest not found!"));
         quest.setDescription(newQuest.getDescription());
-        questRepository.save(quest);
-        return quest;
+        quest.setImportant(newQuest.isImportant());
+        return questRepository.save(quest);
     }
 
     @Override
