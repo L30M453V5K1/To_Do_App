@@ -234,11 +234,6 @@ document.getElementById("filter-important").addEventListener("click", () => {
     getQuests(true); // Fetch only important tasks
 });
 
-document.getElementById("show-all-btn").addEventListener("click", () => {
-    getQuests(false, searchQuery); // Fetch only important tasks
-});
-
-
 document.getElementById("search-quest-btn").addEventListener('click', function() {
     const searchQuery = document.getElementById('search-input').value.trim();
     getQuests(false, searchQuery); // Fetch quests with the search query
