@@ -111,7 +111,7 @@ function getQuests(importantFilter, searchQuery = '') {
                                 }
                         
                                 // Update the description
-                                questDesc.innerHTML = `${updatedQuest.id}. ${updatedQuest.description}`;
+                                questDesc.innerHTML = `${displayId}. ${updatedQuest.description}`;
                         
                                 // Update the "Important" badge
                                 const importantBadge = questDesc.querySelector('.badge.bg-warning');
