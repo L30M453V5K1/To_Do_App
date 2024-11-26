@@ -163,6 +163,13 @@ These new features enhance task management by allowing users to prioritize impor
 2. **Verify the Filtering**:
    - When filtering for important tasks, only tasks marked as important should appear. When showing all tasks, all tasks should be displayed, including both important and non-important ones.
 
+   ### Search Query
+   1. ** Search Task**:
+   - The user clicks on the search field.
+- They type a keyword to check if that word exists in the description of tasks they have previously created.
+- If the word exists, it displays the relevant task.
+- If the word does not exist, it displays nothing.
+
 ---
 
 
