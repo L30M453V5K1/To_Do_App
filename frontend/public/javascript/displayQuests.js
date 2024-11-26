@@ -227,7 +227,7 @@ document.getElementById("sort-descending").addEventListener('click', () => {
 
 // Add event listeners to filter buttons
 document.getElementById("filter-all").addEventListener("click", () => {
-    getQuests(false); // Fetch all tasks
+    getQuests(false);
 });
 
 document.getElementById("filter-important").addEventListener("click", () => {
