@@ -30,9 +30,9 @@
 ## Installation
 
 ### Prerequisites
-- **Java** (version 11 or later)
-- **Maven** (for managing Java dependencies)
-- **Node.js** (for local server on the frontend)
+- **Java** (v11 or later)
+- **Maven** (v3.9.9)
+- **Node.js** (v20.12.2)
 
 ### Backend Setup
 1. Clone the repository:
@@ -56,8 +56,8 @@
     ```
 2. Install the dependencies if any, and run the frontend server with Node.js:
     ```cmd
-    npm install
-    npm start
+    npm install express
+    node app.js
     ```
 By default, this will run the frontend on http://localhost:3000.
 
@@ -72,7 +72,7 @@ By default, this will run the frontend on http://localhost:3000.
 
 ### Use Case Diagram
 
-![UCD](UCD/UCD_1_1.png)
+![UCD](UCD/UCD_1_3.png)
 
 ## API Endpoints
 - **GET /api/index:** Retrieve all quests
@@ -129,6 +129,11 @@ These new features enhance task management by allowing users to prioritize impor
 - **How It Works**:
   - The user can click a "Filter Important Tasks" button to view only tasks that have been marked as important.
   - The user can also click the "Show All Tasks" button to reset the filter and display all tasks, including both important and non-important ones.
+ 
+### 3. Editing Tasks revamped
+- **Functionality**: Users now have more options when editing a certain task.
+- **How it works**:
+  - When the user has already created a task, they can click on the edit button and be greeted with a separate dialog window where they can change the description     of the task, change the importance or the completion status.
   
 ## How the New Functionalities Work
 
@@ -163,15 +168,4 @@ These new features enhance task management by allowing users to prioritize impor
 2. **Verify the Filtering**:
    - When filtering for important tasks, only tasks marked as important should appear. When showing all tasks, all tasks should be displayed, including both important and non-important ones.
 
-   ### Search Query
-   1. ** Search Task**:
-   - The user clicks on the search field.
-- They type a keyword to check if that word exists in the description of tasks they have previously created.
-- If the word exists, it displays the relevant task.
-- If the word does not exist, it displays nothing.
-
 ---
-
-
-
-
