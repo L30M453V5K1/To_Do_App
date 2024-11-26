@@ -147,6 +147,14 @@ These new features enhance task management by allowing users to prioritize impor
   - **Show All Tasks**: Displays all tasks in the current sort order.
   - **Important Tasks**: Filters the tasks to display only those marked as important.
 
+### Editing Tasks
+- Users can edit tasks by clicking the "Edit" button on a task.
+- A dialog window opens, allowing users to:
+  - Modify the description in an input field.
+  - Toggle the "Mark as Important" checkbox to change the task's importance.
+  - Adjust the completion status using a checkbox.
+- Clicking "Apply" updates the task, which will reflect the new details in the task list.
+
 ## How the User Can Test the New Functionality
 
 ### Task Creation and Importance
@@ -167,5 +175,16 @@ These new features enhance task management by allowing users to prioritize impor
    
 2. **Verify the Filtering**:
    - When filtering for important tasks, only tasks marked as important should appear. When showing all tasks, all tasks should be displayed, including both important and non-important ones.
+
+### Editing Tasks
+1. **Edit a Task**:
+  - Click the "Edit" button on a task in the list.
+  - Change the description, importance, or completion status in the dialog window.
+  - Click "Save Changes" to update the task.
+    
+2. **Verify Updates**:
+  - Ensure the task reflects the new description in the list.
+  - Check that the "Important" label is added or removed as appropriate.
+  - Confirm that the completion status indicator updates correctly.
 
 ---
