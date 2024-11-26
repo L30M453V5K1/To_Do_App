@@ -19,5 +19,8 @@ public class Quest {
     private String description;
 
     @Column(nullable = false)
-    private boolean important; // New field
+    private boolean important;
+
+    @Column(nullable = false)
+    private boolean completed;
 }

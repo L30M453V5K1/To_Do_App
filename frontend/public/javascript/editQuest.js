@@ -1,7 +1,8 @@
-export function editQuest(questId, newDescription, isImportant) {
+export function editQuest(questId, newDescription, isImportant, isComplered) {
     const updatedQuest = {
         description: newDescription,
         important: isImportant, // Include the "important" flag
+        completed: isComplered
     };
 
     console.log('Sending PUT request with data:', updatedQuest);

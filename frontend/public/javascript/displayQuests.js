@@ -64,6 +64,13 @@ function getQuests(importantFilter, searchQuery = '') {
                     questDesc.appendChild(importantBadge);
                 }
 
+                if (quest.completed) {
+                    const completedBadge = document.createElement("span");
+                    completedBadge.className = "badge bg-success text-dark ms-2";
+                    completedBadge.innerText = "Completed";
+                    questDesc.appendChild(completedBadge);
+                }
+
                 const editDeleteContainer = document.createElement("div");
                 editDeleteContainer.className = "d-flex justify-content-end";
 
@@ -79,6 +86,7 @@ function getQuests(importantFilter, searchQuery = '') {
                     // Pre-fill modal fields
                     document.getElementById('editQuestDescription').value = quest.description;
                     document.getElementById('editQuestImportant').checked = quest.important;
+                    document.getElementById('editQuestCompleted').checked = quest.completed;
 
                     // Show the modal
                     const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
@@ -88,16 +96,17 @@ function getQuests(importantFilter, searchQuery = '') {
                     document.getElementById('applyEditQuest').onclick = function () {
                         const newDescription = document.getElementById('editQuestDescription').value.trim();
                         const isImportant = document.getElementById('editQuestImportant').checked;
+                        const isCompleted = document.getElementById('editQuestCompleted').checked;
 
                         if (newDescription === '') {
                             alert('Description cannot be empty.');
                             return;
                         }
 
-                        console.log('Applying changes:', { id: quest.id, newDescription, isImportant });
+                        console.log('Applying changes:', { id: quest.id, newDescription, isImportant, isCompleted });
 
                         // Call the editQuest function
-                        editQuest(quest.id, newDescription, isImportant)
+                        editQuest(quest.id, newDescription, isImportant, isCompleted)
                             .then((updatedQuest) => {
                                 console.log('Server response:', updatedQuest);
                         
@@ -117,13 +126,25 @@ function getQuests(importantFilter, searchQuery = '') {
                                 const importantBadge = questDesc.querySelector('.badge.bg-warning');
                                 if (updatedQuest.important) {
                                     if (!importantBadge) {
-                                        const badge = document.createElement('span');
-                                        badge.className = 'badge bg-warning text-dark ms-2';
-                                        badge.innerText = 'Important';
-                                        questDesc.appendChild(badge);
+                                        const badge1 = document.createElement('span');
+                                        badge1.className = 'badge bg-warning text-dark ms-2';
+                                        badge1.innerText = 'Important';
+                                        questDesc.appendChild(badge1);
                                     }
                                 } else {
                                     if (importantBadge) importantBadge.remove();
+                                }
+
+                                const completedBadge = questDesc.querySelector('.badge.bg-success');
+                                if (updatedQuest.completed) {
+                                    if (!completedBadge) {
+                                        const badge2 = document.createElement('span');
+                                        badge2.className = 'badge bg-success text-dark ms-2';
+                                        badge2.innerText = 'Completed';
+                                        questDesc.appendChild(badge2);
+                                    }
+                                } else {
+                                    if (completedBadge) completedBadge.remove();
                                 }
                         
                                 alert('Quest updated successfully!');

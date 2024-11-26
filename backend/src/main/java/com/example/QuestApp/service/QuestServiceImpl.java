@@ -56,6 +56,7 @@ public class QuestServiceImpl implements QuestService {
         Quest quest = questRepository.findById(id).orElseThrow(() -> new Exception("Quest not found!"));
         quest.setDescription(newQuest.getDescription());
         quest.setImportant(newQuest.isImportant());
+        quest.setCompleted(newQuest.isCompleted());
         return questRepository.save(quest);
     }
 
