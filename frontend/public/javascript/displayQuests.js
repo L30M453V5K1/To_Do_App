@@ -243,3 +243,7 @@ document.getElementById("search-quest-btn").addEventListener('click', function()
 document.addEventListener("DOMContentLoaded", () => {
     getQuests(false); // Fetch all tasks on page load
 });
+
+document.getElementById("show-all-btn").addEventListener("click", () => {
+    getQuests(false); // Fetch only important tasks
+});
