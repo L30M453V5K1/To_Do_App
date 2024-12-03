@@ -4,23 +4,23 @@
 
 ## QuestControllerTest
 
-**1. testBrowserMessage_ReturnsCorrectApiResponse (Viktor Mitanovski)**
+**1. testBrowserMessage_ReturnsCorrectApiResponse (Viktor Mitanoski)**
   - Description: Verifies that the browserMessage method returns the correct ApiResponse.
   - Why It’s Important: Ensures the health-check endpoint confirms the app is running.
 
-**2. testGetAllQuests_ReturnsListOfQuests (Viktor Mitanovski)**
+**2. testGetAllQuests_ReturnsListOfQuests (Viktor Mitanoski)**
   - Description: Verifies the getAllQuests method retrieves a list of quests when available.
   - Why It’s Important: Confirms quests can be successfully fetched from the service.
 
-**3. testGetAllQuests_NoQuestsFound (Viktor Mitanovski)**
+**3. testGetAllQuests_NoQuestsFound (Viktor Mitanoski)**
   - Description: Validates that getAllQuests returns an empty list when no quests exist.
   - Why It’s Important: Ensures the system handles scenarios with no available data.
 
-**4. testAddQuest_SuccessfulCreation (Viktor Mitanovski)**
+**4. testAddQuest_SuccessfulCreation (Viktor Mitanoski)**
   - Description: Tests successful creation of a valid quest through addQuest.
   - Why It’s Important: Confirms the system correctly adds new quests.
 
-**5. testAddQuest_WithInvalidQuest_DoesNotThrowException (Viktor Mitanovski)**
+**5. testAddQuest_WithInvalidQuest_DoesNotThrowException (Viktor Mitanoski)**
   - Description: Verifies adding an invalid quest does not throw exceptions.
   - Why It’s Important: Ensures robustness by handling invalid input gracefully.
 
