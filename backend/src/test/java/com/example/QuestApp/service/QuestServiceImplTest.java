@@ -1,8 +1,8 @@
-package com.example.QuestApp;
+package com.example.QuestApp.service;
 
 import com.example.QuestApp.model.Quest;
 import com.example.QuestApp.repository.QuestRepository;
-import com.example.QuestApp.service.QuestServiceImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +31,15 @@ class QuestServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        quest1 = new Quest(1, "Find the lost key", true, false);
-        quest2 = new Quest(2, "Save the princess", false, true);
-        quest3 = new Quest(3, "Defeat the dragon", true, false);
+        quest1 = new Quest(1, "Do something", true, false);
+        quest2 = new Quest(2, "Do something else", false, true);
+        quest3 = new Quest(3, "Do a third thing", true, false);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Reset the interactions with the mocked repository after each test
+        reset(questRepository);
     }
 
     // Test for `getAllQuests` with filtering and searching
@@ -48,7 +54,7 @@ class QuestServiceImplTest {
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals("Defeat the dragon", result.get(0).getDescription());
+        assertEquals("Do a third thing", result.get(0).getDescription());
         verify(questRepository).findAll();
     }
 
@@ -72,8 +78,8 @@ class QuestServiceImplTest {
     @Test
     void testUpdateQuest() throws Exception {
         // Arrange
-        Quest existingQuest = new Quest(1, "Find the lost key", false, false);
-        Quest updatedQuest = new Quest(1, "Find the golden key", true, true);
+        Quest existingQuest = quest1;
+        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true);
 
         when(questRepository.findById(1)).thenReturn(Optional.of(existingQuest));
         when(questRepository.save(existingQuest)).thenReturn(updatedQuest);
@@ -82,7 +88,7 @@ class QuestServiceImplTest {
         Quest result = questService.updateQuest(1, updatedQuest);
 
         // Assert
-        assertEquals("Find the golden key", result.getDescription());
+        assertEquals("Do something, but differently", result.getDescription());
         assertTrue(result.isImportant());
         assertTrue(result.isCompleted());
         verify(questRepository).findById(1);
@@ -93,7 +99,7 @@ class QuestServiceImplTest {
     @Test
     void testUpdateQuestNotFound() throws Exception {
         // Arrange
-        Quest updatedQuest = new Quest(1, "Find the golden key", true, true);
+        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true);
 
         when(questRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -110,7 +116,7 @@ class QuestServiceImplTest {
     @Test
     void testDeleteQuest() throws Exception {
         // Arrange
-        Quest questToDelete = new Quest(1, "Find the lost key", false, false);
+        Quest questToDelete = quest1;
 
         when(questRepository.findById(1)).thenReturn(Optional.of(questToDelete));
 
@@ -137,4 +143,42 @@ class QuestServiceImplTest {
         verify(questRepository).findById(1);
         verify(questRepository, never()).delete(any());
     }
+
+    @Test
+    void testCreateQuest_Success() {
+        // Instantiating
+        Quest newQuest = new Quest(0, "Do a totally new thing", true, false);
+        Quest savedQuest = new Quest(1, "Do a totally new thing", true, false);  // The saved quest has an ID assigned
+
+        when(questRepository.save(newQuest)).thenReturn(savedQuest);
+
+        // Act
+        Quest result = questService.createQuest(newQuest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(savedQuest.getId(), result.getId());
+        assertEquals(savedQuest.getDescription(), result.getDescription());
+        assertTrue(result.isImportant());
+        assertFalse(result.isCompleted());
+        verify(questRepository).save(newQuest);
+    }
+
+    @Test
+    void testCreateQuest_Failure_InvalidData() {
+        // Instantiating
+        Quest invalidQuest = new Quest(0, null, true, false);  // Invalid quest with null description
+
+        when(questRepository.save(invalidQuest)).thenThrow(new IllegalArgumentException("Quest description cannot be null"));
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            questService.createQuest(invalidQuest);
+        });
+
+        assertEquals("Quest description cannot be null", exception.getMessage());
+        verify(questRepository).save(invalidQuest);
+    }
+
+
 }
