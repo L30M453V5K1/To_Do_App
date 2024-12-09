@@ -105,64 +105,67 @@ function getQuests(importantFilter, searchQuery = '') {
                         const newDescription = document.getElementById('editQuestDescription').value.trim();
                         const isImportant = document.getElementById('editQuestImportant').checked;
                         const isCompleted = document.getElementById('editQuestCompleted').checked;
-
+                        const fileInput = document.getElementById('editQuestFile');
+                        const file = fileInput.files[0];
+                    
                         if (newDescription === '') {
                             alert('Description cannot be empty.');
                             return;
                         }
-
-                        console.log('Applying changes:', { id: quest.id, newDescription, isImportant, isCompleted });
-
-                        // Call the editQuest function
-                        editQuest(quest.id, newDescription, isImportant, isCompleted)
-                            .then((updatedQuest) => {
-                                console.log('Server response:', updatedQuest);
-                        
-                                // Locate the quest description element
-                                const questDesc = document.querySelector(`.quest-container[data-id='${updatedQuest.id}'] .quest-desc`);
-                        
-                                if (!questDesc) {
-                                    console.error(`Failed to locate quest description for ID: ${updatedQuest.id}`);
-                                    alert('Failed to update the UI. Please refresh the page to see the changes.');
-                                    return;
-                                }
-                        
-                                // Update the description
-                                questDesc.innerHTML = `${displayId}. ${updatedQuest.description}`;
-                        
-                                // Update the "Important" badge
-                                const importantBadge = questDesc.querySelector('.badge.bg-warning');
-                                if (updatedQuest.important) {
-                                    if (!importantBadge) {
-                                        const badge1 = document.createElement('span');
-                                        badge1.className = 'badge bg-warning text-dark ms-2';
-                                        badge1.innerText = 'Important';
-                                        questDesc.appendChild(badge1);
-                                    }
-                                } else {
-                                    if (importantBadge) importantBadge.remove();
-                                }
-
-                                const completedBadge = questDesc.querySelector('.badge.bg-success');
-                                if (updatedQuest.completed) {
-                                    if (!completedBadge) {
-                                        const badge2 = document.createElement('span');
-                                        badge2.className = 'badge bg-success text-dark ms-2';
-                                        badge2.innerText = 'Completed';
-                                        questDesc.appendChild(badge2);
-                                    }
-                                } else {
-                                    if (completedBadge) completedBadge.remove();
-                                }
-                        
-                                alert('Quest updated successfully!');
-                                editQuestModal.hide(); // Close the modal
+                    
+                        const updatedQuest = {
+                            id: quest.id,
+                            description: newDescription,
+                            important: isImportant,
+                            completed: isCompleted,
+                        };
+                    
+                        if (file) {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('upload_preset', 'ml_default'); // Replace with your Cloudinary preset
+                    
+                            // Upload image to Cloudinary
+                            fetch('https://api.cloudinary.com/v1_1/dq5oo2ceo/image/upload', {
+                                method: 'POST',
+                                body: formData,
                             })
-                            .catch((error) => {
-                                console.error('Failed to update quest:', error);
-                                alert('Failed to update the quest. Please try again.');
-                        });
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.secure_url) {
+                                        updatedQuest.imageUrl = data.secure_url; // Add Cloudinary URL to quest object
+                                    } else {
+                                        throw new Error('Image upload failed');
+                                    }
+                                })
+                                .catch(error => console.error('Error uploading image:', error))
+                                .finally(() => {
+                                    sendEditRequest(updatedQuest); // Proceed to update quest after file upload
+                                });
+                        } else {
+                            sendEditRequest(updatedQuest); // No file to upload, proceed to update quest
+                        }
                     };
+                    
+                    function sendEditRequest(updatedQuest) {
+                        fetch(`http://localhost:8080/api/index/${updatedQuest.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedQuest),
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to update quest');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Quest updated:', data);
+                                location.reload(); // Refresh the page to reflect changes
+                            })
+                            .catch(error => console.error('Failed to update quest:', error));
+                    }
+                    
                 });
                             
                 // Create delete button

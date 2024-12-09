@@ -57,9 +57,11 @@ public class QuestServiceImpl implements QuestService {
         quest.setDescription(newQuest.getDescription());
         quest.setImportant(newQuest.isImportant());
         quest.setCompleted(newQuest.isCompleted());
-        quest.setImageUrl(newQuest.getImageUrl());
+        quest.setImageUrl(newQuest.getImageUrl()); // Ensure the imageUrl is updated
         return questRepository.save(quest);
     }
+
+
 
     @Override
     public void deleteQuest(int id) throws Exception {
