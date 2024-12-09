@@ -24,6 +24,6 @@ public class Quest {
     @Column(nullable = false)
     private boolean completed;
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT") // Set the column type to LONGTEXT
     private String imageUrl; // Store the path or URL to the image
 }

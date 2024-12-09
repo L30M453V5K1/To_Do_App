@@ -32,12 +32,9 @@ public class QuestController {
 
     // TODO
     @PostMapping("/api/index")
-    public Quest addQuest(
-            @RequestPart("quest") Quest quest,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
-        if (image != null && !image.isEmpty()) {
-            String imageUrl = saveImage(image);
-            quest.setImageUrl(imageUrl);
+    public Quest addQuest(@RequestBody Quest quest) {
+        if (quest.getImageUrl() != null && !quest.getImageUrl().isEmpty()) {
+            System.out.println("Received image URL: " + quest.getImageUrl());
         }
         return questService.createQuest(quest);
     }

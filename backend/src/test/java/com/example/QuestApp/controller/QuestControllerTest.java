@@ -75,11 +75,10 @@ class QuestControllerTest {
     // Test for addQuest()
     @Test
     void testAddQuest_SuccessfulCreation() throws IOException {
-        MultipartFile newImage = null;
         Quest newQuest = new Quest(3, "Save the princess", false, false, "image3.jpg");
         when(questService.createQuest(newQuest)).thenReturn(newQuest);
 
-        Quest result = questController.addQuest(newQuest, newImage);
+        Quest result = questController.addQuest(newQuest);
 
         assertNotNull(result);
         assertEquals("Save the princess", result.getDescription());
@@ -89,11 +88,10 @@ class QuestControllerTest {
 
     @Test
     void testAddQuest_WithInvalidQuest_DoesNotThrowException() throws IOException {
-        MultipartFile newImage = null;
         Quest invalidQuest = new Quest(0, "", false, false, "");
         when(questService.createQuest(invalidQuest)).thenReturn(invalidQuest);
 
-        Quest result = questController.addQuest(invalidQuest, newImage);
+        Quest result = questController.addQuest(invalidQuest);
 
         assertNotNull(result);
         assertEquals(invalidQuest, result);

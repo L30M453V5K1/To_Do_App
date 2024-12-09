@@ -64,6 +64,14 @@ function getQuests(importantFilter, searchQuery = '') {
                     questDesc.appendChild(importantBadge);
                 }
 
+                if (quest.imageUrl) {
+                    const questImage = document.createElement("img");
+                    questImage.className = "quest-image img-fluid"; // You can customize the class to style the image
+                    questImage.src = quest.imageUrl; // Set the image source from the imageUrl
+                    questImage.alt = "Quest Image"; // Alt text for the image
+                    questContainer.appendChild(questImage); // Add the image to the quest container
+                }
+
                 if (quest.completed) {
                     const completedBadge = document.createElement("span");
                     completedBadge.className = "badge bg-success text-dark ms-2";
