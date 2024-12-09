@@ -5,7 +5,10 @@ import com.example.QuestApp.model.Quest;
 import com.example.QuestApp.service.QuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -27,15 +30,38 @@ public class QuestController {
         return questService.getAllQuests(sort, importantFilter, search);
     }
 
-
+    // TODO
     @PostMapping("/api/index")
-    public Quest addQuest(@RequestBody Quest quest) { //post method has @RequestBody
+    public Quest addQuest(
+            @RequestPart("quest") Quest quest,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = saveImage(image);
+            quest.setImageUrl(imageUrl);
+        }
         return questService.createQuest(quest);
     }
 
+    // TODO
     @PutMapping("/api/index/{id}")
-    public Quest updateQuest(@PathVariable int id, @RequestBody Quest quest) throws Exception {
+    public Quest updateQuest(
+            @PathVariable int id,
+            @RequestPart("quest") Quest quest,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = saveImage(image);
+            quest.setImageUrl(imageUrl);
+        }
         return questService.updateQuest(id, quest);
+    }
+
+    // TODO
+    private String saveImage(MultipartFile image) throws IOException {
+        String filePath = "uploads/" + image.getOriginalFilename(); // Set the file path in the 'uploads' directory
+        File file = new File(filePath); // Create a new File object
+        file.getParentFile().mkdirs(); // Ensure the directory exists (create if not)
+        image.transferTo(file); // Save the file to the specified path
+        return image.getOriginalFilename(); // Return a URL to access the image
     }
 
     @DeleteMapping("/api/index/{id}")

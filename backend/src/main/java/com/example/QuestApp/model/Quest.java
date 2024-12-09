@@ -23,4 +23,7 @@ public class Quest {
 
     @Column(nullable = false)
     private boolean completed;
+
+    @Column
+    private String imageUrl; // Store the path or URL to the image
 }

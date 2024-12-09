@@ -31,9 +31,9 @@ class QuestServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        quest1 = new Quest(1, "Do something", true, false);
-        quest2 = new Quest(2, "Do something else", false, true);
-        quest3 = new Quest(3, "Do a third thing", true, false);
+        quest1 = new Quest(1, "Do something", true, false, null);
+        quest2 = new Quest(2, "Do something else", false, true, null);
+        quest3 = new Quest(3, "Do a third thing", true, false, null);
     }
 
     @AfterEach
@@ -79,7 +79,7 @@ class QuestServiceImplTest {
     void testUpdateQuest() throws Exception {
         // Arrange
         Quest existingQuest = quest1;
-        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true);
+        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true, "Something.jpg");
 
         when(questRepository.findById(1)).thenReturn(Optional.of(existingQuest));
         when(questRepository.save(existingQuest)).thenReturn(updatedQuest);
@@ -99,7 +99,7 @@ class QuestServiceImplTest {
     @Test
     void testUpdateQuestNotFound() throws Exception {
         // Arrange
-        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true);
+        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true, "SomethingElse.jpg");
 
         when(questRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -147,8 +147,8 @@ class QuestServiceImplTest {
     @Test
     void testCreateQuest_Success() {
         // Instantiating
-        Quest newQuest = new Quest(0, "Do a totally new thing", true, false);
-        Quest savedQuest = new Quest(1, "Do a totally new thing", true, false);  // The saved quest has an ID assigned
+        Quest newQuest = new Quest(0, "Do a totally new thing", true, false, "CoolImage.png");
+        Quest savedQuest = new Quest(1, "Do a totally new thing", true, false, "Wooow.jpg");  // The saved quest has an ID assigned
 
         when(questRepository.save(newQuest)).thenReturn(savedQuest);
 
@@ -167,7 +167,7 @@ class QuestServiceImplTest {
     @Test
     void testCreateQuest_Failure_InvalidData() {
         // Instantiating
-        Quest invalidQuest = new Quest(0, null, true, false);  // Invalid quest with null description
+        Quest invalidQuest = new Quest(0, null, true, false, null);  // Invalid quest with null description
 
         when(questRepository.save(invalidQuest)).thenThrow(new IllegalArgumentException("Quest description cannot be null"));
 

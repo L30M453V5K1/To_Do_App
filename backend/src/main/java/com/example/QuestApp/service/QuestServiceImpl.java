@@ -57,6 +57,7 @@ public class QuestServiceImpl implements QuestService {
         quest.setDescription(newQuest.getDescription());
         quest.setImportant(newQuest.isImportant());
         quest.setCompleted(newQuest.isCompleted());
+        quest.setImageUrl(newQuest.getImageUrl());
         return questRepository.save(quest);
     }
 
