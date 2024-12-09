@@ -19,44 +19,23 @@ let isDescending = getSortingPreference(); // Initialize with the saved preferen
 function getQuests(importantFilter, searchQuery = '') {
     const sortParam = isDescending ? 'desc' : 'asc';
 
-    // Construct the URL with the sorting, filtering, and search query parameters
     fetch(`http://localhost:8080/api/index?sort=${sortParam}&importantFilter=${importantFilter}&search=${encodeURIComponent(searchQuery)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();  // Parse the JSON response
-        })
+        .then(response => response.json())
         .then(quests => {
-            console.log('Fetched quests:', quests); // Log the quests to the console
-
-            // Get the main container for rendering the tasks
             const questContainerMain = document.getElementById("quest-container");
-
-            // Clear the container before rendering new quests
-            questContainerMain.innerHTML = '';
-
-            let totalColumnsInCurrentRow = 0;
-            let currentRow;
+            questContainerMain.innerHTML = ''; // Clear existing tasks
 
             quests.forEach((quest, index) => {
-                // Calculate the display ID based on sort order (ascending or descending)
                 const displayId = isDescending ? quests.length - index : index + 1;
-
-                // Create quest column
-                const questColumn = document.createElement("div");
-                questColumn.className = "col-sm-12 col-md-6 col-lg-3";
 
                 // Create quest container
                 const questContainer = document.createElement("div");
-                questContainer.className = "container-fluid quest-container";
-                questContainer.setAttribute("data-id", quest.id); // Store the actual database ID for internal use
+                questContainer.className = "quest-container";
 
                 const questDesc = document.createElement("div");
                 questDesc.className = "quest-desc fs-6";
-                questDesc.innerHTML = `${displayId}. ${quest.description}`; // Use dynamic displayId
+                questDesc.innerHTML = `${displayId}. ${quest.description}`;
 
-                // Add an "Important" badge if the task is marked as important
                 if (quest.important) {
                     const importantBadge = document.createElement("span");
                     importantBadge.className = "badge bg-warning text-dark ms-2";
@@ -66,10 +45,10 @@ function getQuests(importantFilter, searchQuery = '') {
 
                 if (quest.imageUrl) {
                     const questImage = document.createElement("img");
-                    questImage.className = "quest-image img-fluid"; // You can customize the class to style the image
-                    questImage.src = quest.imageUrl; // Set the image source from the imageUrl
-                    questImage.alt = "Quest Image"; // Alt text for the image
-                    questContainer.appendChild(questImage); // Add the image to the quest container
+                    questImage.className = "quest-image img-fluid";
+                    questImage.src = quest.imageUrl;
+                    questImage.alt = "Quest Image";
+                    questContainer.appendChild(questImage);
                 }
 
                 if (quest.completed) {
@@ -82,93 +61,10 @@ function getQuests(importantFilter, searchQuery = '') {
                 const editDeleteContainer = document.createElement("div");
                 editDeleteContainer.className = "d-flex justify-content-end";
 
-                // Create edit button
                 const editQuestButton = document.createElement("button");
                 editQuestButton.className = "btn btn-outline-warning edit-btn";
-                editQuestButton.innerHTML = "Edit Quest";
+                editQuestButton.innerHTML = "Edit";
 
-                // Attach edit functionality to each quest's "Edit" button
-                editQuestButton.addEventListener('click', function () {
-                    console.log('Editing quest:', quest);
-
-                    // Pre-fill modal fields
-                    document.getElementById('editQuestDescription').value = quest.description;
-                    document.getElementById('editQuestImportant').checked = quest.important;
-                    document.getElementById('editQuestCompleted').checked = quest.completed;
-
-                    // Show the modal
-                    const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
-                    editQuestModal.show();
-
-                    // Apply changes
-                    document.getElementById('applyEditQuest').onclick = function () {
-                        const newDescription = document.getElementById('editQuestDescription').value.trim();
-                        const isImportant = document.getElementById('editQuestImportant').checked;
-                        const isCompleted = document.getElementById('editQuestCompleted').checked;
-                        const fileInput = document.getElementById('editQuestFile');
-                        const file = fileInput.files[0];
-                    
-                        if (newDescription === '') {
-                            alert('Description cannot be empty.');
-                            return;
-                        }
-                    
-                        const updatedQuest = {
-                            id: quest.id,
-                            description: newDescription,
-                            important: isImportant,
-                            completed: isCompleted,
-                        };
-                    
-                        if (file) {
-                            const formData = new FormData();
-                            formData.append('file', file);
-                            formData.append('upload_preset', 'ml_default'); // Replace with your Cloudinary preset
-                    
-                            // Upload image to Cloudinary
-                            fetch('https://api.cloudinary.com/v1_1/dq5oo2ceo/image/upload', {
-                                method: 'POST',
-                                body: formData,
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.secure_url) {
-                                        updatedQuest.imageUrl = data.secure_url; // Add Cloudinary URL to quest object
-                                    } else {
-                                        throw new Error('Image upload failed');
-                                    }
-                                })
-                                .catch(error => console.error('Error uploading image:', error))
-                                .finally(() => {
-                                    sendEditRequest(updatedQuest); // Proceed to update quest after file upload
-                                });
-                        } else {
-                            sendEditRequest(updatedQuest); // No file to upload, proceed to update quest
-                        }
-                    };
-                    
-                    function sendEditRequest(updatedQuest) {
-                        fetch(`http://localhost:8080/api/index/${updatedQuest.id}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedQuest),
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Failed to update quest');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                console.log('Quest updated:', data);
-                                location.reload(); // Refresh the page to reflect changes
-                            })
-                            .catch(error => console.error('Failed to update quest:', error));
-                    }
-                    
-                });
-                            
-                // Create delete button
                 const deleteQuestButton = document.createElement("button");
                 deleteQuestButton.className = "delete-btn";
                 const redCross = document.createElement("img");
@@ -176,45 +72,35 @@ function getQuests(importantFilter, searchQuery = '') {
                 redCross.className = "red-cross";
                 deleteQuestButton.appendChild(redCross);
 
-                // Attach delete functionality
-                deleteQuestButton.addEventListener('click', function () {
-                    deleteQuest(quest.id, questContainer); // Use database ID for backend deletion
+                // Attach event listeners
+                editQuestButton.addEventListener('click', function () {
+                    // Pre-fill modal fields
+                    document.getElementById('editQuestDescription').value = quest.description;
+                    document.getElementById('editQuestImportant').checked = quest.important;
+                    document.getElementById('editQuestCompleted').checked = quest.completed;
+
+                    const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
+                    editQuestModal.show();
                 });
 
-                // Append buttons to the editDeleteContainer
+                deleteQuestButton.addEventListener('click', function () {
+                    deleteQuest(quest.id, questContainer);
+                });
+
                 editDeleteContainer.appendChild(editQuestButton);
                 editDeleteContainer.appendChild(deleteQuestButton);
 
-                // Append ID, description, and buttons to the quest container
+                // Append elements to quest container
                 questContainer.appendChild(questDesc);
                 questContainer.appendChild(editDeleteContainer);
 
-                // Append the quest container to the quest column
-                questColumn.appendChild(questContainer);
-
-                // Logic for rows and columns (bootstrap 12-column system)
-                const columnsAdded = 3;
-
-                if (!currentRow || totalColumnsInCurrentRow + columnsAdded > 12) {
-                    // Create a new row if needed
-                    const newRow = document.createElement("div");
-                    newRow.className = "row justify-content-evenly";
-                    questContainerMain.appendChild(newRow);
-                    currentRow = newRow;
-                    totalColumnsInCurrentRow = 0;
-                }
-
-                // Append the quest column to the current row
-                currentRow.appendChild(questColumn);
-
-                // Update the total number of columns in the current row
-                totalColumnsInCurrentRow += columnsAdded;
+                // Append quest container to main container
+                questContainerMain.appendChild(questContainer);
             });
         })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
+
 
 // Function to toggle sorting order and refresh quests
 function toggleSort() {

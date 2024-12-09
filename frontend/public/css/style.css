@@ -1,43 +1,35 @@
 .quest-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: block; /* Stacks items vertically */
+    padding: 1rem; /* Add padding for better readability */
     background-color: hsl(0, 0%, 13%);
-    border: 1px solid;
-    border-color: hsl(0, 0%, 35%);
+    border: 1px solid hsl(0, 0%, 35%);
     border-radius: 10px;
-    margin-top: 3%; margin-bottom: 3%;
+    margin-bottom: 1rem; /* Space between tasks */
 }
+
 .quest-desc {
     color: hsl(0, 0%, 100%);
     text-align: start;
+    margin-bottom: 0.5rem; /* Add spacing below description */
 }
-.body-btn {
-    margin-top: 10px;
-    margin-bottom: 10px;
+
+.quest-image {
+    max-height: 150px; /* Limit the image height */
+    margin-bottom: 0.5rem; /* Add space below the image */
+    border-radius: 0.5rem; /* Optional: rounded edges */
 }
+
+.edit-btn, .delete-btn {
+    margin-top: 0.5rem;
+}
+
 .red-cross {
     width: 20px;
     height: 20px;
 }
-.edit-btn {
-    margin-top: 0.5vh;
-    margin-right: 0.5vw;
-}
-.delete-btn {
-    border: none;
-    border-radius: 30%;
-    background-color: hsl(0, 0%, 12%);
-}
 
 .form-check {
     color: white !important;
-    margin-left: 26%;
-    margin-bottom: 20px;
-}
-
-#filter {
-    margin-left: 23%;
     margin-bottom: 20px;
 }
 
