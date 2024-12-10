@@ -40,8 +40,12 @@ public class QuestController {
     public Quest updateQuest(
             @PathVariable int id,
             @RequestBody Quest quest, MultipartFile newImage) throws Exception {
+        if (quest.getImageUrl() != null && quest.getImageUrl().isEmpty()) {
+            quest.setImageUrl(null); // Remove the attachment
+        }
         return questService.updateQuest(id, quest);
     }
+
 
     @DeleteMapping("/api/index/{id}")
     public ApiResponse deleteQuest(@PathVariable int id) throws Exception {

@@ -1,4 +1,3 @@
-import { editQuest } from './editQuest.js';
 import { deleteQuest } from './deleteQuest.js';
 
 // Function to get the sorting preference from localStorage
@@ -13,7 +12,7 @@ function setSortingPreference(isDescending) {
 }
 
 // Variable to store the current sort order
-let isDescending = getSortingPreference(); // Initialize with the saved preference
+let isDescending = getSortingPreference();
 
 // Function to fetch quests from the server
 function getQuests(importantFilter, searchQuery = '') {
@@ -63,16 +62,8 @@ function getQuests(importantFilter, searchQuery = '') {
 
                 const editQuestButton = document.createElement("button");
                 editQuestButton.className = "btn btn-outline-warning edit-btn";
-                editQuestButton.innerHTML = "Edit";
+                editQuestButton.innerHTML = "Edit Quest";
 
-                const deleteQuestButton = document.createElement("button");
-                deleteQuestButton.className = "delete-btn";
-                const redCross = document.createElement("img");
-                redCross.src = "/images/9c6cd7076c9be69e66174619f8f63e3d.png";
-                redCross.className = "red-cross";
-                deleteQuestButton.appendChild(redCross);
-
-                // Attach event listeners
                 editQuestButton.addEventListener('click', function () {
                     // Pre-fill modal fields
                     document.getElementById('editQuestDescription').value = quest.description;
@@ -81,7 +72,84 @@ function getQuests(importantFilter, searchQuery = '') {
 
                     const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
                     editQuestModal.show();
+
+                    // Re-define the Apply button's `onclick` to handle this specific quest
+                    const applyButton = document.getElementById('applyEditQuest');
+                    applyButton.onclick = function () {
+                        const newDescription = document.getElementById('editQuestDescription').value.trim();
+                        const isImportant = document.getElementById('editQuestImportant').checked;
+                        const isCompleted = document.getElementById('editQuestCompleted').checked;
+                        const fileInput = document.getElementById('editQuestFile');
+                        const file = fileInput.files[0];
+                        const removeAttachment = document.getElementById('removeAttachment').checked;
+                    
+                        if (newDescription === '') {
+                            alert('Description cannot be empty.');
+                            return;
+                        }
+                    
+                        const updatedQuest = {
+                            id: quest.id,
+                            description: newDescription,
+                            important: isImportant,
+                            completed: isCompleted,
+                        };
+                    
+                        // Handle file upload or attachment removal
+                        if (removeAttachment) {
+                            updatedQuest.imageUrl = ''; // Set imageUrl to an empty string to remove it
+                            sendEditRequest(updatedQuest);
+                        } else if (file) {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('upload_preset', 'ml_default'); // Replace with your Cloudinary preset
+                    
+                            fetch('https://api.cloudinary.com/v1_1/dq5oo2ceo/image/upload', {
+                                method: 'POST',
+                                body: formData,
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.secure_url) {
+                                        updatedQuest.imageUrl = data.secure_url; // Add Cloudinary URL to quest object
+                                    } else {
+                                        throw new Error('Image upload failed');
+                                    }
+                                })
+                                .catch(error => console.error('Error uploading image:', error))
+                                .finally(() => sendEditRequest(updatedQuest));
+                        } else {
+                            sendEditRequest(updatedQuest); // No changes to the attachment
+                        }
+                    };
+                    
+                    function sendEditRequest(updatedQuest) {
+                        fetch(`http://localhost:8080/api/index/${updatedQuest.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedQuest),
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to update quest');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Quest updated:', data);
+                                location.reload(); // Refresh the page to reflect changes
+                            })
+                            .catch(error => console.error('Failed to update quest:', error));
+                    }
+                    
                 });
+
+                const deleteQuestButton = document.createElement("button");
+                deleteQuestButton.className = "delete-btn";
+                const redCross = document.createElement("img");
+                redCross.src = "/images/9c6cd7076c9be69e66174619f8f63e3d.png";
+                redCross.className = "red-cross";
+                deleteQuestButton.appendChild(redCross);
 
                 deleteQuestButton.addEventListener('click', function () {
                     deleteQuest(quest.id, questContainer);
@@ -90,57 +158,16 @@ function getQuests(importantFilter, searchQuery = '') {
                 editDeleteContainer.appendChild(editQuestButton);
                 editDeleteContainer.appendChild(deleteQuestButton);
 
-                // Append elements to quest container
                 questContainer.appendChild(questDesc);
                 questContainer.appendChild(editDeleteContainer);
 
-                // Append quest container to main container
                 questContainerMain.appendChild(questContainer);
             });
         })
         .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
 
-
-// Function to toggle sorting order and refresh quests
-function toggleSort() {
-    isDescending = !isDescending; // Toggle the sorting order
-    setSortingPreference(isDescending); // Save the new preference
-    getQuests(false); // Fetch quests with the updated sorting order (show all tasks)
-}
-
-// Add event listeners to sorting buttons
-document.getElementById("sort-ascending").addEventListener('click', () => {
-    isDescending = false;
-    setSortingPreference(isDescending); // Save the preference
-    getQuests(false); // Fetch all tasks
-});
-
-document.getElementById("sort-descending").addEventListener('click', () => {
-    isDescending = true;
-    setSortingPreference(isDescending); // Save the preference
-    getQuests(false); // Fetch all tasks
-});
-
-// Add event listeners to filter buttons
-document.getElementById("filter-all").addEventListener("click", () => {
-    getQuests(false);
-});
-
-document.getElementById("filter-important").addEventListener("click", () => {
-    getQuests(true); // Fetch only important tasks
-});
-
-document.getElementById("search-quest-btn").addEventListener('click', function() {
-    const searchQuery = document.getElementById('search-input').value.trim();
-    getQuests(false, searchQuery); // Fetch quests with the search query
-});
-
-// Load quests when the page is ready
+// Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
-    getQuests(false); // Fetch all tasks on page load
-});
-
-document.getElementById("show-all-btn").addEventListener("click", () => {
-    getQuests(false); // Fetch only important tasks
+    getQuests(false);
 });
