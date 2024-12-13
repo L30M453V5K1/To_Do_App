@@ -145,7 +145,7 @@ function getQuests(importantFilter, searchQuery = '') {
                 });
 
                 const deleteQuestButton = document.createElement("button");
-                deleteQuestButton.className = "delete-btn";
+                deleteQuestButton.className = "btn btn-outline-secondary delete-btn";
                 const redCross = document.createElement("img");
                 redCross.src = "/images/9c6cd7076c9be69e66174619f8f63e3d.png";
                 redCross.className = "red-cross";
