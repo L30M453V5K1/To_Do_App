@@ -169,5 +169,91 @@ function getQuests(importantFilter, searchQuery = '') {
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
+
+    // Get references to modal and form elements
+    const newQuestButton = document.getElementById('new-quest-btn');
+    const applyNewQuestButton = document.getElementById('applyNewQuest');
+    const newQuestModal = new bootstrap.Modal(document.getElementById('newQuestModal'));
+
+    // Event listener to show the modal when the "New Quest" button is clicked
+    newQuestButton.addEventListener('click', function () {
+        newQuestModal.show(); // Open the modal
+    });
+
+    // Event listener for the "Create" button in the modal
+    applyNewQuestButton.addEventListener('click', function () {
+        // Get the values from the modal form
+        const questDescription = document.getElementById('newQuestDescription').value.trim();
+        const isImportant = document.getElementById('newQuestImportant').checked;
+        const imageInput = document.getElementById('newQuestFile');
+        const imageFile = imageInput.files[0];
+
+        // Check if the description is empty
+        if (questDescription === '') {
+            alert('Please enter a quest description.');
+            return;
+        }
+
+        // Create the quest object
+        const newQuest = {
+            description: questDescription,
+            important: isImportant,
+        };
+
+        // Handle image upload if a file is selected
+        if (imageFile) {
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            formData.append('upload_preset', 'ml_default');
+        
+            fetch('https://api.cloudinary.com/v1_1/dq5oo2ceo/image/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.secure_url) {
+                    newQuest.imageUrl = data.secure_url;
+                } else {
+                    throw new Error('Image upload failed');
+                }
+                sendQuestToBackend(newQuest, imageInput); // Send to backend only after upload success
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+                sendQuestToBackend(newQuest, imageInput); // Send to backend without image
+            });
+        } else {
+            sendQuestToBackend(newQuest, imageInput);
+        }                    
+    });
+
+    // Function to send the quest to the backend
+    function sendQuestToBackend(quest) {
+        fetch('http://localhost:8080/api/index', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(quest), // Convert the quest object to JSON
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create quest.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Quest created:', data);
+                location.reload(); // Refresh the page to show updated quests
+            })
+            .catch(error => console.error('Error creating quest:', error))
+            .finally(() => {
+                // Clear the form and close the modal
+                document.getElementById('newQuestForm').reset(); // Reset all form fields
+                newQuestModal.hide(); // Close the modal
+            });
+    }
+
     getQuests(false);
 });
