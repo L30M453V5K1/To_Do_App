@@ -5,7 +5,6 @@ import com.example.QuestApp.model.Quest;
 import com.example.QuestApp.service.QuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,22 +29,13 @@ public class QuestController {
 
     @PostMapping("/api/index")
     public Quest addQuest(@RequestBody Quest quest) {
-        if (quest.getImageUrl() != null && !quest.getImageUrl().isEmpty()) {
-            System.out.println("Received image URL: " + quest.getImageUrl());
-        }
         return questService.createQuest(quest);
     }
 
     @PutMapping("/api/index/{id}")
-    public Quest updateQuest(
-            @PathVariable int id,
-            @RequestBody Quest quest, MultipartFile newImage) throws Exception {
-        if (quest.getImageUrl() != null && quest.getImageUrl().isEmpty()) {
-            quest.setImageUrl(null); // Remove the attachment
-        }
+    public Quest updateQuest(@PathVariable int id, @RequestBody Quest quest) throws Exception {
         return questService.updateQuest(id, quest);
     }
-
 
     @DeleteMapping("/api/index/{id}")
     public ApiResponse deleteQuest(@PathVariable int id) throws Exception {

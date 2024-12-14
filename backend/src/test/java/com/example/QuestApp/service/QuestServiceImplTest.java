@@ -1,6 +1,7 @@
 package com.example.QuestApp.service;
 
 import com.example.QuestApp.model.Quest;
+import com.example.QuestApp.model.Quest.Day;
 import com.example.QuestApp.repository.QuestRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,12 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(MockitoExtension.class)  // This ensures that Mockito annotations are processed
 class QuestServiceImplTest {
 
@@ -31,9 +32,12 @@ class QuestServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        quest1 = new Quest(1, "Do something", true, false, null);
-        quest2 = new Quest(2, "Do something else", false, true, null);
-        quest3 = new Quest(3, "Do a third thing", true, false, null);
+        quest1 = new Quest(1, "Find the lost key", true, false, null, true,
+                new HashSet<>(Arrays.asList(Day.MONDAY, Day.WEDNESDAY)), LocalTime.of(10, 0));
+        quest2 = new Quest(2, "Defeat the dragon", false, true, "dragon.jpg", false,
+                Collections.emptySet(), null);
+        quest3 = new Quest(3, "Save the princess", true, false, "princess.png", true,
+                new HashSet<>(Arrays.asList(Day.FRIDAY, Day.SATURDAY)), LocalTime.of(15, 30));
     }
 
     @AfterEach
@@ -50,11 +54,11 @@ class QuestServiceImplTest {
         when(questRepository.findAll()).thenReturn(quests);
 
         // Act
-        List<Quest> result = questService.getAllQuests("asc", true, "dragon");
+        List<Quest> result = questService.getAllQuests("asc", true, "princess");
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals("Do a third thing", result.get(0).getDescription());
+        assertEquals("Save the princess", result.get(0).getDescription());
         verify(questRepository).findAll();
     }
 
@@ -79,7 +83,8 @@ class QuestServiceImplTest {
     void testUpdateQuest() throws Exception {
         // Arrange
         Quest existingQuest = quest1;
-        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true, "Something.jpg");
+        Quest updatedQuest = new Quest(1, "Find the hidden artifact", true, true, "artifact.jpg", true,
+                new HashSet<>(Arrays.asList(Day.TUESDAY, Day.THURSDAY)), LocalTime.of(14, 0));
 
         when(questRepository.findById(1)).thenReturn(Optional.of(existingQuest));
         when(questRepository.save(existingQuest)).thenReturn(updatedQuest);
@@ -88,9 +93,10 @@ class QuestServiceImplTest {
         Quest result = questService.updateQuest(1, updatedQuest);
 
         // Assert
-        assertEquals("Do something, but differently", result.getDescription());
-        assertTrue(result.isImportant());
+        assertEquals("Find the hidden artifact", result.getDescription());
         assertTrue(result.isCompleted());
+        assertEquals(LocalTime.of(14, 0), result.getRepeatTime());
+        assertEquals(2, result.getRepeatDays().size());
         verify(questRepository).findById(1);
         verify(questRepository).save(existingQuest);
     }
@@ -99,7 +105,8 @@ class QuestServiceImplTest {
     @Test
     void testUpdateQuestNotFound() throws Exception {
         // Arrange
-        Quest updatedQuest = new Quest(1, "Do something, but differently", true, true, "SomethingElse.jpg");
+        Quest updatedQuest = new Quest(1, "Find the hidden artifact", true, true, "artifact.jpg", true,
+                new HashSet<>(Arrays.asList(Day.TUESDAY, Day.THURSDAY)), LocalTime.of(14, 0));
 
         when(questRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -144,11 +151,14 @@ class QuestServiceImplTest {
         verify(questRepository, never()).delete(any());
     }
 
+    // Test for `createQuest` with all fields
     @Test
     void testCreateQuest_Success() {
-        // Instantiating
-        Quest newQuest = new Quest(0, "Do a totally new thing", true, false, "CoolImage.png");
-        Quest savedQuest = new Quest(1, "Do a totally new thing", true, false, "Wooow.jpg");  // The saved quest has an ID assigned
+        // Arrange
+        Quest newQuest = new Quest(0, "Slay the mighty dragon", true, false, "dragon_slayer.jpg", true,
+                new HashSet<>(Arrays.asList(Day.SUNDAY)), LocalTime.of(17, 0));
+        Quest savedQuest = new Quest(4, "Slay the mighty dragon", true, false, "dragon_slayer.jpg", true,
+                new HashSet<>(Arrays.asList(Day.SUNDAY)), LocalTime.of(17, 0));
 
         when(questRepository.save(newQuest)).thenReturn(savedQuest);
 
@@ -158,16 +168,17 @@ class QuestServiceImplTest {
         // Assert
         assertNotNull(result);
         assertEquals(savedQuest.getId(), result.getId());
-        assertEquals(savedQuest.getDescription(), result.getDescription());
-        assertTrue(result.isImportant());
-        assertFalse(result.isCompleted());
+        assertEquals("Slay the mighty dragon", result.getDescription());
+        assertEquals(LocalTime.of(17, 0), result.getRepeatTime());
+        assertEquals(1, result.getRepeatDays().size());
         verify(questRepository).save(newQuest);
     }
 
+    // Test for `createQuest` with invalid data
     @Test
     void testCreateQuest_Failure_InvalidData() {
-        // Instantiating
-        Quest invalidQuest = new Quest(0, null, true, false, null);  // Invalid quest with null description
+        // Arrange
+        Quest invalidQuest = new Quest(0, null, true, false, null, true, Collections.emptySet(), null);
 
         when(questRepository.save(invalidQuest)).thenThrow(new IllegalArgumentException("Quest description cannot be null"));
 
@@ -179,6 +190,4 @@ class QuestServiceImplTest {
         assertEquals("Quest description cannot be null", exception.getMessage());
         verify(questRepository).save(invalidQuest);
     }
-
-
 }
