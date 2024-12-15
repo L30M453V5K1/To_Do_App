@@ -48,10 +48,41 @@
                                         <input type="file" class="form-control" id="newQuestFile">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="newQuestDays" class="form-label">Days of Repeat (optional)</label>
-                                        <input type="text" class="form-control" id="newQuestDays" placeholder="Enter day(s) of repeat (for multiple days separate with a ',')">
+                                        <label class="form-label">Days of Repeat (optional)</label>
+                                        <div id="newQuestDaysCheckboxGroup">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="monday" value="Monday">
+                                                <label class="form-check-label" for="monday">Monday</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
+                                                <label class="form-check-label" for="tuesday">Tuesday</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
+                                                <label class="form-check-label" for="wednesday">Wednesday</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
+                                                <label class="form-check-label" for="thursday">Thursday</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="friday" value="Friday">
+                                                <label class="form-check-label" for="friday">Friday</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
+                                                <label class="form-check-label" for="saturday">Saturday</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
+                                                <label class="form-check-label" for="sunday">Sunday</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="newQuestTime" class="form-label">Time of Repeat (optional)</label>
-                                        <input type="number" class="form-control" id="newQuestTime" placeholder="Enter the time of repeat">
+                                        <input type="time" class="form-control" id="newQuestTime">
                                     </div>
                                 </form>
                             </div>
@@ -132,11 +163,43 @@
                             <label class="form-check-label" for="removeAttachment">Remove Attachment</label>
                         </div>
                         <div class="mb-3">
-                            <label for="newQuestDays" class="form-label">Days of Repeat</label>
-                            <input type="text" class="form-control" id="newQuestDays" placeholder="Enter day(s) of repeat (for multiple days separate with a ',')">
-                            <label for="newQuestTime" class="form-label">Time of Repeat</label>
-                            <input type="number" class="form-control" id="newQuestTime" placeholder="Enter the time of repeat">
-                        </div>                        
+                            <label class="form-label">Days of Repeat (optional)</label>
+                            <div id="newQuestDaysCheckboxGroup">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="monday" value="Monday">
+                                    <label class="form-check-label" for="monday">Monday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
+                                    <label class="form-check-label" for="tuesday">Tuesday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
+                                    <label class="form-check-label" for="wednesday">Wednesday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
+                                    <label class="form-check-label" for="thursday">Thursday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="friday" value="Friday">
+                                    <label class="form-check-label" for="friday">Friday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
+                                    <label class="form-check-label" for="saturday">Saturday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
+                                    <label class="form-check-label" for="sunday">Sunday</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newQuestTime" class="form-label">Time of Repeat (optional)</label>
+                            <input type="time" class="form-control" id="newQuestTime">
+                        </div>
+                                               
                     </form>
                 </div>
                 <div class="modal-footer">
