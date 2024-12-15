@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,21 +44,31 @@ public class QuestServiceImpl implements QuestService {
 
     @Override
     public Quest createQuest(Quest quest) {
-        validateRepeatableQuest(quest);
+        // Validate the quest and ensure it's repeatable if days and time are provided
+        if (quest.isRepeatable() && (quest.getRepeatDays() == null || quest.getRepeatDays().isEmpty())) {
+            throw new IllegalArgumentException("Repeatable quests must have at least one repeat day.");
+        }
+        if (quest.isRepeatable() && quest.getRepeatTime() == null) {
+            throw new IllegalArgumentException("Repeatable quests must have a repeat time.");
+        }
+
+        // Save the quest entity to the database
         return questRepository.save(quest);
     }
 
     @Override
     public Quest updateQuest(int id, Quest newQuest) throws Exception {
         Quest quest = questRepository.findById(id).orElseThrow(() -> new Exception("Quest not found!"));
+
+        // Update the quest's fields
         quest.setDescription(newQuest.getDescription());
         quest.setImportant(newQuest.isImportant());
         quest.setCompleted(newQuest.isCompleted());
         quest.setImageUrl(newQuest.getImageUrl());
         quest.setRepeatable(newQuest.isRepeatable());
-        quest.setRepeatDays(newQuest.getRepeatDays());
         quest.setRepeatTime(newQuest.getRepeatTime());
-        validateRepeatableQuest(quest);
+        quest.setRepeatDays(newQuest.getRepeatDays()); // Directly update the repeatDays field (string)
+
         return questRepository.save(quest);
     }
 
@@ -65,6 +76,18 @@ public class QuestServiceImpl implements QuestService {
     public void deleteQuest(int id) throws Exception {
         Quest quest = questRepository.findById(id).orElseThrow(() -> new Exception("Quest not found!"));
         questRepository.delete(quest);
+    }
+
+    // New method to get a quest by its ID
+    @Override
+    public Quest getQuestById(int id) throws Exception {
+        Optional<Quest> questOptional = questRepository.findById(id);
+
+        if (!questOptional.isPresent()) {
+            throw new Exception("Quest not found with ID: " + id); // Throw an exception if quest is not found
+        }
+
+        return questOptional.get(); // Return the quest if found
     }
 
     private void validateRepeatableQuest(Quest quest) {

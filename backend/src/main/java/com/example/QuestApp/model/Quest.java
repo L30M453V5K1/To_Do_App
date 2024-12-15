@@ -34,15 +34,10 @@ public class Quest {
     @Column(nullable = false)
     private boolean repeatable; // Whether the quest is repeatable
 
-    @ElementCollection(targetClass = Day.class, fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "quest_repeat_days", joinColumns = @JoinColumn(name = "quest_id"))
-    @Column(name = "day")
-    private Set<Day> repeatDays = new HashSet<>(); // Days of the week for repeatable quests
+    @Column(columnDefinition = "TEXT") // Store days as a comma-separated string (e.g., 'MONDAY,TUESDAY')
+    private String repeatDays; // Days of the week for repeatable quests
 
     private LocalTime repeatTime; // Time when the quest repeats
 
-    public enum Day {
-        MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
-    }
+    // Getter and Setter methods can be added as needed
 }

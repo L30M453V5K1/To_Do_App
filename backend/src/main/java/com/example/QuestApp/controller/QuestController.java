@@ -27,6 +27,12 @@ public class QuestController {
         return questService.getAllQuests(sort, importantFilter, search);
     }
 
+    // New GET endpoint to fetch a single quest by its ID
+    @GetMapping("/api/index/{id}")
+    public Quest getQuestById(@PathVariable int id) throws Exception {
+        return questService.getQuestById(id); // Add a method in your service to fetch quest by ID
+    }
+
     @PostMapping("/api/index")
     public Quest addQuest(@RequestBody Quest quest) {
         return questService.createQuest(quest);
@@ -34,6 +40,7 @@ public class QuestController {
 
     @PutMapping("/api/index/{id}")
     public Quest updateQuest(@PathVariable int id, @RequestBody Quest quest) throws Exception {
+        System.out.println("Received updated quest: " + quest);
         return questService.updateQuest(id, quest);
     }
 

@@ -6,8 +6,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link href="/css/style.css" rel="stylesheet">
-    <script type="module" src="/javascript/displayQuests.js" defer></script>
+
+    <!-- Import editQuest.js before displayQuests.js -->
+    <script type="module" src="/javascript/editQuest.js" defer></script>  <!-- Ensure this file is loaded first -->
+    <script type="module" src="/javascript/displayQuests.js" defer></script> <!-- This file uses editQuest -->
     <script src="/javascript/newQuest.js" defer></script>
+    
     <title>QuestBoard</title>
 </head>
 <body class="bg-dark" data-bs-theme="dark">
@@ -133,82 +137,75 @@
         </div>
     </main>
     <!-- Edit Quest Modal -->
-    <div class="modal fade" id="editQuestModal" tabindex="-1" aria-labelledby="editQuestModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editQuestModalLabel">Edit Quest</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editQuestForm">
-                        <div class="mb-3">
-                            <label for="editQuestDescription" class="form-label">New Description</label>
-                            <input type="text" class="form-control" id="editQuestDescription" placeholder="Enter new description">
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editQuestImportant">
-                            <label class="form-check-label" for="editQuestImportant">Mark as Important</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editQuestCompleted">
-                            <label class="form-check-label" for="editQuestImportant">Mark as Completed</label>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editQuestFile" class="form-label">Attach File</label>
-                            <input type="file" class="form-control" id="editQuestFile">
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="removeAttachment">
-                            <label class="form-check-label" for="removeAttachment">Remove Attachment</label>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Days of Repeat (optional)</label>
-                            <div id="newQuestDaysCheckboxGroup">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="monday" value="Monday">
-                                    <label class="form-check-label" for="monday">Monday</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
-                                    <label class="form-check-label" for="tuesday">Tuesday</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
-                                    <label class="form-check-label" for="wednesday">Wednesday</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
-                                    <label class="form-check-label" for="thursday">Thursday</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="friday" value="Friday">
-                                    <label class="form-check-label" for="friday">Friday</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
-                                    <label class="form-check-label" for="saturday">Saturday</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
-                                    <label class="form-check-label" for="sunday">Sunday</label>
-                                </div>
+    <!-- Edit Quest Modal -->
+<div class="modal fade" id="editQuestModal" tabindex="-1" aria-labelledby="editQuestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editQuestModalLabel">Edit Quest</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editQuestForm">
+                    <div class="mb-3">
+                        <label for="editQuestDescription" class="form-label">New Description</label>
+                        <input type="text" class="form-control" id="editQuestDescription" placeholder="Enter new description">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editQuestImportant">
+                        <label class="form-check-label" for="editQuestImportant">Mark as Important</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editQuestCompleted">
+                        <label class="form-check-label" for="editQuestCompleted">Mark as Completed</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Days of Repeat (optional)</label>
+                        <div id="newQuestDaysCheckboxGroup">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="monday" value="Monday">
+                                <label class="form-check-label" for="monday">Monday</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
+                                <label class="form-check-label" for="tuesday">Tuesday</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
+                                <label class="form-check-label" for="wednesday">Wednesday</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
+                                <label class="form-check-label" for="thursday">Thursday</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="friday" value="Friday">
+                                <label class="form-check-label" for="friday">Friday</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
+                                <label class="form-check-label" for="saturday">Saturday</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
+                                <label class="form-check-label" for="sunday">Sunday</label>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="newQuestTime" class="form-label">Time of Repeat (optional)</label>
-                            <input type="time" class="form-control" id="newQuestTime">
-                        </div>
-                                               
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-outline-warning" id="applyEditQuest">Apply</button>
-                </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newQuestTime" class="form-label">Time of Repeat (optional)</label>
+                        <input type="time" class="form-control" id="newQuestTime">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-warning" id="applyEditQuest">Apply</button>
             </div>
         </div>
     </div>
+</div>
+
     <footer class="text-center text-lg-start bg-dark border-top border-body" data-bs-theme="dark">
         <div class="text-center text-white p-3 bg-dark">
             © 2024 Copyright:

@@ -9,4 +9,5 @@ public interface QuestService {
     Quest createQuest(Quest quest);
     Quest updateQuest(int id, Quest newQuest) throws Exception;
     void deleteQuest(int id) throws Exception;
+    Quest getQuestById(int id) throws Exception;
 }

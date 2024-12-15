@@ -42,6 +42,18 @@ function getQuests(importantFilter, searchQuery = '') {
                     questDesc.appendChild(importantBadge);
                 }
 
+                // Add repeat information (if available)
+                if (quest.repeatable) {
+                    const repeatInfo = document.createElement("div");
+                    repeatInfo.className = "fs-6 text-secondary mt-1";
+
+                    const repeatDays = quest.repeatDays ? quest.repeatDays.split(',').join(', ') : 'No specific days';
+                    const repeatTime = quest.repeatTime || 'No specific time';
+
+                    repeatInfo.innerHTML = `Repeats on: <strong>${repeatDays}</strong> at <strong>${repeatTime}</strong>`;
+                    questDesc.appendChild(repeatInfo);
+                }
+
                 if (quest.imageUrl) {
                     const questImage = document.createElement("img");
                     questImage.className = "quest-image img-fluid";
@@ -64,84 +76,77 @@ function getQuests(importantFilter, searchQuery = '') {
                 editQuestButton.className = "btn btn-outline-warning edit-btn";
                 editQuestButton.innerHTML = "Edit Quest";
 
+                // Edit button functionality
                 editQuestButton.addEventListener('click', function () {
-                    // Pre-fill modal fields
+                    // Prefill the modal with the current task values
                     document.getElementById('editQuestDescription').value = quest.description;
                     document.getElementById('editQuestImportant').checked = quest.important;
                     document.getElementById('editQuestCompleted').checked = quest.completed;
 
+                    // Prefill days checkboxes for recurring tasks
+                    const daysCheckboxes = document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input');
+                    daysCheckboxes.forEach((checkbox) => {
+                        checkbox.checked = quest.repeatDays && quest.repeatDays.split(',').includes(checkbox.value);
+                    });
+
+                    // Prefill the repeat time field
+                    document.getElementById('newQuestTime').value = quest.repeatTime || '';
+
+                    // Show the edit modal
                     const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
                     editQuestModal.show();
 
-                    // Re-define the Apply button's `onclick` to handle this specific quest
                     const applyButton = document.getElementById('applyEditQuest');
                     applyButton.onclick = function () {
                         const newDescription = document.getElementById('editQuestDescription').value.trim();
                         const isImportant = document.getElementById('editQuestImportant').checked;
                         const isCompleted = document.getElementById('editQuestCompleted').checked;
-                        const fileInput = document.getElementById('editQuestFile');
-                        const file = fileInput.files[0];
-                        const removeAttachment = document.getElementById('removeAttachment').checked;
-                    
-                        if (newDescription === '') {
+
+                        // Get selected days (checkboxes)
+                        const selectedDays = Array.from(
+                            document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input:checked')
+                        ).map((checkbox) => checkbox.value);
+
+                        // Get repeat time
+                        const updatedTime = document.getElementById('newQuestTime').value || null; // Set to null if empty
+
+                        // Validation: Ensure description is not empty
+                        if (!newDescription) {
                             alert('Description cannot be empty.');
                             return;
                         }
-                    
+
+                        // Prepare the updated quest object
                         const updatedQuest = {
-                            id: quest.id,
+                            id: quest.id, // Existing quest ID for updating
                             description: newDescription,
                             important: isImportant,
                             completed: isCompleted,
+                            repeatable: selectedDays.length > 0 || updatedTime !== null, // Set as repeatable if days or time are provided
+                            repeatDays: selectedDays.length > 0 ? selectedDays.join(',') : null, // Join selected days as a comma-separated string or null
+                            repeatTime: updatedTime, // Repeat time, null if not provided
                         };
-                    
-                        // Handle file upload or attachment removal
-                        if (removeAttachment) {
-                            updatedQuest.imageUrl = ''; // Set imageUrl to an empty string to remove it
-                            sendEditRequest(updatedQuest);
-                        } else if (file) {
-                            const formData = new FormData();
-                            formData.append('file', file);
-                            formData.append('upload_preset', 'ml_default'); // Replace with your Cloudinary preset
-                    
-                            fetch('https://api.cloudinary.com/v1_1/dq5oo2ceo/image/upload', {
-                                method: 'POST',
-                                body: formData,
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.secure_url) {
-                                        updatedQuest.imageUrl = data.secure_url; // Add Cloudinary URL to quest object
-                                    } else {
-                                        throw new Error('Image upload failed');
-                                    }
-                                })
-                                .catch(error => console.error('Error uploading image:', error))
-                                .finally(() => sendEditRequest(updatedQuest));
-                        } else {
-                            sendEditRequest(updatedQuest); // No changes to the attachment
-                        }
-                    };
-                    
-                    function sendEditRequest(updatedQuest) {
-                        fetch(`http://localhost:8080/api/index/${updatedQuest.id}`, {
+
+                        // Send the updated task to the backend
+                        fetch(`http://localhost:8080/api/index/${quest.id}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(updatedQuest),
                         })
                             .then(response => {
                                 if (!response.ok) {
-                                    throw new Error('Failed to update quest');
+                                    throw new Error(`Failed to update quest with ID: ${quest.id}`);
                                 }
-                                return response.json();
+                                return response.json(); // Parse the JSON response
                             })
                             .then(data => {
-                                console.log('Quest updated:', data);
-                                location.reload(); // Refresh the page to reflect changes
+                                console.log('Updated quest data from server:', data);
+                                location.reload(); // Reload the page to show updated tasks
                             })
-                            .catch(error => console.error('Failed to update quest:', error));
-                    }
-                    
+                            .catch(error => {
+                                console.error('Error updating quest:', error);
+                            });
+                    };
                 });
 
                 const deleteQuestButton = document.createElement("button");
@@ -167,93 +172,22 @@ function getQuests(importantFilter, searchQuery = '') {
         .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
 
-// Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
 
     // Get references to modal and form elements
-    const newQuestButton = document.getElementById('new-quest-btn');
-    const applyNewQuestButton = document.getElementById('applyNewQuest');
-    const newQuestModal = new bootstrap.Modal(document.getElementById('newQuestModal'));
+const newQuestButton = document.getElementById('new-quest-btn');
+const applyNewQuestButton = document.getElementById('applyNewQuest');
+const newQuestModal = new bootstrap.Modal(document.getElementById('newQuestModal'));
 
-    // Event listener to show the modal when the "New Quest" button is clicked
-    newQuestButton.addEventListener('click', function () {
-        newQuestModal.show(); // Open the modal
-    });
+// Event listener to show the modal when the "New Quest" button is clicked
+newQuestButton.addEventListener('click', function () {
+    newQuestModal.show(); // Open the modal
+});
 
-    // Event listener for the "Create" button in the modal
-    applyNewQuestButton.addEventListener('click', function () {
-        // Get the values from the modal form
-        const questDescription = document.getElementById('newQuestDescription').value.trim();
-        const isImportant = document.getElementById('newQuestImportant').checked;
-        const imageInput = document.getElementById('newQuestFile');
-        const imageFile = imageInput.files[0];
-
-        // Check if the description is empty
-        if (questDescription === '') {
-            alert('Please enter a quest description.');
-            return;
-        }
-
-        // Create the quest object
-        const newQuest = {
-            description: questDescription,
-            important: isImportant,
-        };
-
-        // Handle image upload if a file is selected
-        if (imageFile) {
-            const formData = new FormData();
-            formData.append('file', imageFile);
-            formData.append('upload_preset', 'ml_default');
-        
-            fetch('https://api.cloudinary.com/v1_1/dq5oo2ceo/image/upload', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.secure_url) {
-                    newQuest.imageUrl = data.secure_url;
-                } else {
-                    throw new Error('Image upload failed');
-                }
-                sendQuestToBackend(newQuest, imageInput); // Send to backend only after upload success
-            })
-            .catch(error => {
-                console.error('Error uploading image:', error);
-                sendQuestToBackend(newQuest, imageInput); // Send to backend without image
-            });
-        } else {
-            sendQuestToBackend(newQuest, imageInput);
-        }                    
-    });
-
-    // Function to send the quest to the backend
-    function sendQuestToBackend(quest) {
-        fetch('http://localhost:8080/api/index', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(quest), // Convert the quest object to JSON
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to create quest.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Quest created:', data);
-                location.reload(); // Refresh the page to show updated quests
-            })
-            .catch(error => console.error('Error creating quest:', error))
-            .finally(() => {
-                // Clear the form and close the modal
-                document.getElementById('newQuestForm').reset(); // Reset all form fields
-                newQuestModal.hide(); // Close the modal
-            });
-    }
+// Event listener for the "Create" button in the modal
+applyNewQuestButton.addEventListener('click', function () {
+    // Get the values from the modal form       
+});
 
     getQuests(false);
 });
