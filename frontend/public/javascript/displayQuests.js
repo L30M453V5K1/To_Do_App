@@ -104,11 +104,14 @@ function getQuests(importantFilter, searchQuery = '') {
 
                         // Get selected days (checkboxes)
                         const selectedDays = Array.from(
-                            document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input:checked')
+                            document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input:checked'),
+                            console.log("OK")
                         ).map((checkbox) => checkbox.value);
 
+                        console.log(selectedDays);
+
                         // Get repeat time
-                        const updatedTime = document.getElementById('newQuestTime').value || null; // Set to null if empty
+                        const updatedTime = document.getElementById('editQuestTime').value || null; // Set to null if empty
 
                         // Validation: Ensure description is not empty
                         if (!newDescription) {
