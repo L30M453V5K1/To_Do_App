@@ -14,7 +14,7 @@ function setSortingPreference(isDescending) {
 // Variable to store the current sort order
 let isDescending = getSortingPreference();
 
-// Function to fetch quests from the server
+
 function getQuests(importantFilter, searchQuery = '') {
     const sortParam = isDescending ? 'desc' : 'asc';
 
@@ -27,6 +27,9 @@ function getQuests(importantFilter, searchQuery = '') {
             quests.forEach((quest, index) => {
                 const displayId = isDescending ? quests.length - index : index + 1;
 
+                if (quest.repeatable == false){
+                    return; 
+                }
                 // Create quest container
                 const questContainer = document.createElement("div");
                 questContainer.className = "quest-container";
@@ -172,50 +175,8 @@ function getQuests(importantFilter, searchQuery = '') {
         .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
-
-    // Get references to modal and form elements
-const newQuestButton = document.getElementById('new-quest-btn');
-const applyNewQuestButton = document.getElementById('applyNewQuest');
-const newQuestModal = new bootstrap.Modal(document.getElementById('newQuestModal'));
-const important = document.getElementById('filter-important');
-const filterAll = document.getElementById('filter-all'); // is
-const showAllButton = document.getElementById('show-all-btn'); // isto
-const searchButton = document.getElementById('search-quest-btn'); // isto
-
-important.addEventListener('click', function () {
-    getQuests(true);
-});
-
-filterAll.addEventListener('click', function () {
     getQuests(false);
-});
 
-showAllButton.addEventListener('click', function () {
-    getQuests(false);
-});
-
-searchButton.addEventListener('click', function () {
-    const input = document.getElementById('search-input'); 
-    const inputValue = input.value.trim();
-
-    if (inputValue) {
-        getQuests(false, inputValue); 
-    } else {
-        console.log("Search input is empty.");
-    }
-});
-
-
-// Event listener to show the modal when the "New Quest" button is clicked
-newQuestButton.addEventListener('click', function () {
-    newQuestModal.show(); // Open the modal
-});
-
-// Event listener for the "Create" button in the modal
-applyNewQuestButton.addEventListener('click', function () {
-    // Get the values from the modal form       
-});
-
-    getQuests(false);
-});
+})
