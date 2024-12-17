@@ -14,9 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,11 +33,8 @@ class QuestControllerTest {
 
     @BeforeEach
     void setUp() {
-        Set<Quest.Day> repeatDays1 = new HashSet<>(Arrays.asList(Quest.Day.MONDAY, Quest.Day.WEDNESDAY));
-        quest1 = new Quest(1, "Find the lost key", true, false, "image1.jpg", true, repeatDays1, LocalTime.of(10, 0));
-
-        Set<Quest.Day> repeatDays2 = new HashSet<>();
-        quest2 = new Quest(2, "Defeat the dragon", false, true, "image2.jpg", false, repeatDays2, null);
+        quest1 = new Quest(1, "Find the lost key", true, false, "image1.jpg", true, "MONDAY,WEDNESDAY", LocalTime.of(10, 0));
+        quest2 = new Quest(2, "Defeat the dragon", false, true, "image2.jpg", false, null, null);
     }
 
     @AfterEach
@@ -60,14 +55,16 @@ class QuestControllerTest {
     void testGetAllQuests_ReturnsListOfQuests() {
         when(questService.getAllQuests("asc", false, ""))
                 .thenReturn(Arrays.asList(quest1, quest2));
+
         List<Quest> result = questController.getAllQuests("asc", false, "");
 
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("Find the lost key", result.get(0).getDescription());
         assertTrue(result.get(0).isRepeatable());
+        assertEquals("MONDAY,WEDNESDAY", result.get(0).getRepeatDays());
         assertEquals(LocalTime.of(10, 0), result.get(0).getRepeatTime());
-        assertTrue(result.get(0).getRepeatDays().contains(Quest.Day.MONDAY));
+
         verify(questService, times(1)).getAllQuests("asc", false, "");
     }
 
@@ -75,6 +72,7 @@ class QuestControllerTest {
     void testGetAllQuests_NoQuestsFound() {
         when(questService.getAllQuests("asc", false, ""))
                 .thenReturn(Collections.emptyList());
+
         List<Quest> result = questController.getAllQuests("asc", false, "");
 
         assertNotNull(result);
@@ -85,8 +83,7 @@ class QuestControllerTest {
     // Test for addQuest()
     @Test
     void testAddQuest_SuccessfulCreation() {
-        Set<Quest.Day> repeatDays = new HashSet<>(Arrays.asList(Quest.Day.TUESDAY, Quest.Day.THURSDAY));
-        Quest newQuest = new Quest(3, "Save the princess", false, false, "image3.jpg", true, repeatDays, LocalTime.of(8, 30));
+        Quest newQuest = new Quest(3, "Save the princess", false, false, "image3.jpg", true, "TUESDAY,THURSDAY", LocalTime.of(8, 30));
         when(questService.createQuest(newQuest)).thenReturn(newQuest);
 
         Quest result = questController.addQuest(newQuest);
@@ -94,20 +91,22 @@ class QuestControllerTest {
         assertNotNull(result);
         assertEquals("Save the princess", result.getDescription());
         assertTrue(result.isRepeatable());
+        assertEquals("TUESDAY,THURSDAY", result.getRepeatDays());
         assertEquals(LocalTime.of(8, 30), result.getRepeatTime());
-        assertTrue(result.getRepeatDays().contains(Quest.Day.TUESDAY));
+
         verify(questService, times(1)).createQuest(newQuest);
     }
 
     @Test
     void testAddQuest_WithInvalidQuest_DoesNotThrowException() {
-        Quest invalidQuest = new Quest(0, "", false, false, "", false, new HashSet<>(), null);
+        Quest invalidQuest = new Quest(0, "", false, false, "", false, null, null);
         when(questService.createQuest(invalidQuest)).thenReturn(invalidQuest);
 
         Quest result = questController.addQuest(invalidQuest);
 
         assertNotNull(result);
         assertFalse(result.isRepeatable());
+        assertNull(result.getRepeatDays());
         assertNull(result.getRepeatTime());
         verify(questService).createQuest(invalidQuest);
     }
@@ -116,23 +115,24 @@ class QuestControllerTest {
     @Test
     public void testUpdateQuest_Success() throws Exception {
         int questId = 1;
-        Set<Quest.Day> updatedRepeatDays = new HashSet<>(Arrays.asList(Quest.Day.FRIDAY));
-        Quest updatedQuest = new Quest(questId, "Some new description", true, true, "newImage.jpg", true, updatedRepeatDays, LocalTime.of(12, 15));
+        Quest updatedQuest = new Quest(questId, "Updated Quest Description", true, true, "newImage.jpg", true, "FRIDAY", LocalTime.of(12, 15));
         when(questService.updateQuest(eq(questId), any(Quest.class))).thenReturn(updatedQuest);
 
         Quest result = questController.updateQuest(questId, updatedQuest);
 
         assertNotNull(result);
+        assertEquals("Updated Quest Description", result.getDescription());
         assertTrue(result.isRepeatable());
+        assertEquals("FRIDAY", result.getRepeatDays());
         assertEquals(LocalTime.of(12, 15), result.getRepeatTime());
-        assertTrue(result.getRepeatDays().contains(Quest.Day.FRIDAY));
+
         verify(questService, times(1)).updateQuest(questId, updatedQuest);
     }
 
     @Test
     public void testUpdateQuest_QuestNotFound() throws Exception {
         int questId = 1;
-        Quest updatedQuest = new Quest(questId, "Updated Quest Description", true, false, "image1.jpg", false, new HashSet<>(), null);
+        Quest updatedQuest = new Quest(questId, "Updated Quest Description", true, false, "image1.jpg", false, null, null);
 
         when(questService.updateQuest(eq(questId), any(Quest.class)))
                 .thenThrow(new Exception("Quest not found"));
