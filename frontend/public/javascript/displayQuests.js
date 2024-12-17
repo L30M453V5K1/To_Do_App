@@ -69,6 +69,20 @@ function getQuests(importantFilter, searchQuery = '') {
                     questDesc.appendChild(completedBadge);
                 }
 
+                // Create checkbox to mark task as completed
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "form-check-input me-3";
+                checkbox.checked = quest.completed;
+
+                // Add checkbox functionality
+                checkbox.addEventListener("change", function () {
+                    if (checkbox.checked) {
+                        markTaskCompleted(quest, questContainer);
+                    }
+                });
+
+                // Edit/Delete functionality (keep the edit section intact)
                 const editDeleteContainer = document.createElement("div");
                 editDeleteContainer.className = "d-flex justify-content-end";
 
@@ -77,80 +91,64 @@ function getQuests(importantFilter, searchQuery = '') {
                 editQuestButton.innerHTML = "Edit Quest";
 
                 // Edit button functionality
-                editQuestButton.addEventListener('click', function () {
-                    // Prefill the modal with the current task values
-                    document.getElementById('editQuestDescription').value = quest.description;
-                    document.getElementById('editQuestImportant').checked = quest.important;
-                    document.getElementById('editQuestCompleted').checked = quest.completed;
+editQuestButton.addEventListener('click', function () {
+    document.getElementById('editQuestDescription').value = quest.description;
+    document.getElementById('editQuestImportant').checked = quest.important;
+    document.getElementById('editQuestCompleted').checked = quest.completed;
 
-                    // Prefill days checkboxes for recurring tasks
-                    const daysCheckboxes = document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input');
-                    daysCheckboxes.forEach((checkbox) => {
-                        checkbox.checked = quest.repeatDays && quest.repeatDays.split(',').includes(checkbox.value);
-                    });
+    // Disabling the recurrence fields so they can't be edited
+    const daysCheckboxes = document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input');
+    daysCheckboxes.forEach((checkbox) => {
+        checkbox.disabled = true; // Disable recurrence checkboxes
+    });
 
-                    // Prefill the repeat time field
-                    document.getElementById('newQuestTime').value = quest.repeatTime || '';
+    const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
+    editQuestModal.show();
 
-                    // Show the edit modal
-                    const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
-                    editQuestModal.show();
+    const applyButton = document.getElementById('applyEditQuest');
+    applyButton.onclick = function () {
+        const newDescription = document.getElementById('editQuestDescription').value.trim();
+        const isImportant = document.getElementById('editQuestImportant').checked;
+        const isCompleted = document.getElementById('editQuestCompleted').checked;
 
-                    const applyButton = document.getElementById('applyEditQuest');
-                    applyButton.onclick = function () {
-                        const newDescription = document.getElementById('editQuestDescription').value.trim();
-                        const isImportant = document.getElementById('editQuestImportant').checked;
-                        const isCompleted = document.getElementById('editQuestCompleted').checked;
+        if (!newDescription) {
+            alert('Description cannot be empty.');
+            return;
+        }
 
-                        // Get selected days (checkboxes)
-                        const selectedDays = Array.from(
-                            document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input:checked'),
-                            console.log("OK")
-                        ).map((checkbox) => checkbox.value);
+        // Prepare the updated task object without updating the recurrence (keep original)
+        const updatedQuest = {
+            id: quest.id,
+            description: newDescription,
+            important: isImportant,
+            completed: isCompleted,
+            repeatable: quest.repeatable,  // Don't modify recurrence
+            repeatDays: quest.repeatDays,  // Keep original recurrence days
+            repeatTime: quest.repeatTime,  // Keep original recurrence time
+        };
 
-                        console.log(selectedDays);
+        // Send the updated task to the backend
+        fetch(`http://localhost:8080/api/index/${quest.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedQuest),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to update quest with ID: ${quest.id}`);
+                }
+                return response.json(); // Parse the JSON response
+            })
+            .then(data => {
+                console.log('Updated quest data from server:', data);
+                location.reload(); // Reload the page to show updated tasks
+            })
+            .catch(error => {
+                console.error('Error updating quest:', error);
+            });
+    };
+});
 
-                        // Get repeat time
-                        const updatedTime = document.getElementById('editQuestTime').value || null; // Set to null if empty
-
-                        // Validation: Ensure description is not empty
-                        if (!newDescription) {
-                            alert('Description cannot be empty.');
-                            return;
-                        }
-
-                        // Prepare the updated quest object
-                        const updatedQuest = {
-                            id: quest.id, // Existing quest ID for updating
-                            description: newDescription,
-                            important: isImportant,
-                            completed: isCompleted,
-                            repeatable: selectedDays.length > 0 || updatedTime !== null, // Set as repeatable if days or time are provided
-                            repeatDays: selectedDays.length > 0 ? selectedDays.join(',') : null, // Join selected days as a comma-separated string or null
-                            repeatTime: updatedTime, // Repeat time, null if not provided
-                        };
-
-                        // Send the updated task to the backend
-                        fetch(`http://localhost:8080/api/index/${quest.id}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedQuest),
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`Failed to update quest with ID: ${quest.id}`);
-                                }
-                                return response.json(); // Parse the JSON response
-                            })
-                            .then(data => {
-                                console.log('Updated quest data from server:', data);
-                                location.reload(); // Reload the page to show updated tasks
-                            })
-                            .catch(error => {
-                                console.error('Error updating quest:', error);
-                            });
-                    };
-                });
 
                 const deleteQuestButton = document.createElement("button");
                 deleteQuestButton.className = "btn btn-outline-secondary delete-btn";
@@ -166,59 +164,144 @@ function getQuests(importantFilter, searchQuery = '') {
                 editDeleteContainer.appendChild(editQuestButton);
                 editDeleteContainer.appendChild(deleteQuestButton);
 
+                questContainer.appendChild(checkbox);
                 questContainer.appendChild(questDesc);
                 questContainer.appendChild(editDeleteContainer);
 
                 questContainerMain.appendChild(questContainer);
+
+                // Schedule the task to reappear if it's recurrent
+                if (quest.repeatable) {
+                    scheduleTaskReappearance(quest);
+                }
             });
         })
         .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
 
+// Function to mark task as completed and save it to localStorage
+function markTaskCompleted(task, taskContainer) {
+    const updatedTask = {
+        ...task,
+        completed: true,
+    };
+
+    // Remove the task from the database (delete it)
+    fetch(`http://localhost:8080/api/index/${task.id}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to delete task from the database');
+            console.log(`Task with ID ${task.id} deleted from database.`);
+        })
+        .catch(error => console.error('Error deleting task:', error));
+
+    // Save the task's recurrence info in localStorage with its next recurrence time
+    const taskWithRecurrence = { ...task, nextOccurrence: getNextOccurrenceTime(task) };
+    localStorage.setItem(`task-${task.id}`, JSON.stringify(taskWithRecurrence));
+
+    taskContainer.remove(); // Remove task from the UI
+
+    // Automatically recreate the task at the next recurrence
+    setTimeout(() => {
+        const taskFromStorage = JSON.parse(localStorage.getItem(`task-${task.id}`));
+        if (taskFromStorage) {
+            createRecurringTask(taskFromStorage); // Create the task in the database
+        }
+    }, taskWithRecurrence.nextOccurrence - Date.now());
+}
+
+// Function to get the next occurrence time for the task
+function getNextOccurrenceTime(task) {
+    const now = new Date();
+    const taskTime = new Date();
+    const [hour, minute] = task.repeatTime.split(':');
+    taskTime.setHours(hour);
+    taskTime.setMinutes(minute);
+    taskTime.setSeconds(0);
+
+    const repeatDays = task.repeatDays.split(',');
+    const repeatDayMap = {
+        'sunday': 0,
+        'monday': 1,
+        'tuesday': 2,
+        'wednesday': 3,
+        'thursday': 4,
+        'friday': 5,
+        'saturday': 6
+    };
+
+    // Find the next scheduled occurrence day
+    let nextOccurrenceDay = repeatDayMap[repeatDays[0].toLowerCase()];
+    taskTime.setDate(now.getDate() + ((nextOccurrenceDay - now.getDay() + 7) % 7));
+
+    return taskTime.getTime(); // Return the time in milliseconds
+}
+
+// Function to create a new recurring task in the database
+function createRecurringTask(task) {
+    fetch('http://localhost:8080/api/index', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(task),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Recurring task created:', data);
+            // Fetch the task again and display it
+            getQuests(false);
+        })
+        .catch(error => console.error('Error creating recurring task:', error));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-
     // Get references to modal and form elements
-const newQuestButton = document.getElementById('new-quest-btn');
-const applyNewQuestButton = document.getElementById('applyNewQuest');
-const newQuestModal = new bootstrap.Modal(document.getElementById('newQuestModal'));
-const important = document.getElementById('filter-important');
-const filterAll = document.getElementById('filter-all'); // is
-const showAllButton = document.getElementById('show-all-btn'); // isto
-const searchButton = document.getElementById('search-quest-btn'); // isto
+    const newQuestButton = document.getElementById('new-quest-btn');
+    const applyNewQuestButton = document.getElementById('applyNewQuest');
+    const newQuestModal = new bootstrap.Modal(document.getElementById('newQuestModal'));
+    const important = document.getElementById('filter-important');
+    const filterAll = document.getElementById('filter-all');
+    const showAllButton = document.getElementById('show-all-btn');
+    const searchButton = document.getElementById('search-quest-btn');
 
-important.addEventListener('click', function () {
-    getQuests(true);
-});
+    important.addEventListener('click', function () {
+        getQuests(true);
+    });
 
-filterAll.addEventListener('click', function () {
+    filterAll.addEventListener('click', function () {
+        getQuests(false);
+    });
+
+    showAllButton.addEventListener('click', function () {
+        getQuests(false);
+    });
+
+    searchButton.addEventListener('click', function () {
+        const input = document.getElementById('search-input'); 
+        const inputValue = input.value.trim();
+
+        if (inputValue) {
+            getQuests(false, inputValue); 
+        } else {
+            console.log("Search input is empty.");
+        }
+    });
+
+    // Event listener to show the modal when the "New Quest" button is clicked
+    newQuestButton.addEventListener('click', function () {
+        newQuestModal.show(); // Open the modal
+    });
+
+    // Event listener for the "Create" button in the modal
+    applyNewQuestButton.addEventListener('click', function () {
+        // Get the values from the modal form       
+    });
+
     getQuests(false);
-});
 
-showAllButton.addEventListener('click', function () {
-    getQuests(false);
-});
-
-searchButton.addEventListener('click', function () {
-    const input = document.getElementById('search-input'); 
-    const inputValue = input.value.trim();
-
-    if (inputValue) {
-        getQuests(false, inputValue); 
-    } else {
-        console.log("Search input is empty.");
-    }
-});
-
-
-// Event listener to show the modal when the "New Quest" button is clicked
-newQuestButton.addEventListener('click', function () {
-    newQuestModal.show(); // Open the modal
-});
-
-// Event listener for the "Create" button in the modal
-applyNewQuestButton.addEventListener('click', function () {
-    // Get the values from the modal form       
-});
-
-    getQuests(false);
+    // Auto-refresh tasks every minute to check for tasks that need to be displayed
+    setInterval(() => {
+        console.log("Auto-refreshing tasks...");
+        getQuests(false);
+    }, 60000); // 60,000 ms = 1 minute
 });
