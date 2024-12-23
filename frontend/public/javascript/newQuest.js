@@ -22,7 +22,7 @@ document.getElementById('applyNewQuest').addEventListener('click', function () {
         description: questDescription,
         important: isImportant,
         repeatable: selectedDays.length > 0 || !!repeatTime,
-        repeatDays: selectedDays.join(','), // Store as a comma-separated string
+        repeatDays: selectedDays.join(',') || null, // Store as a comma-separated string
         repeatTime: repeatTime || null, // Null if no time is selected
     };
 

@@ -21,6 +21,7 @@ function getQuests(importantFilter, searchQuery = '') {
     fetch(`http://localhost:8080/api/index?sort=${sortParam}&importantFilter=${importantFilter}&search=${encodeURIComponent(searchQuery)}`)
         .then(response => response.json())
         .then(quests => {
+            console.log(quests);
             const questContainerMain = document.getElementById("quest-container");
             questContainerMain.innerHTML = ''; // Clear existing tasks
 
@@ -170,10 +171,7 @@ editQuestButton.addEventListener('click', function () {
 
                 questContainerMain.appendChild(questContainer);
 
-                // Schedule the task to reappear if it's recurrent
-                if (quest.repeatable) {
-                    scheduleTaskReappearance(quest);
-                }
+                
             });
         })
         .catch(error => console.error('There was a problem with the fetch operation:', error));
@@ -254,6 +252,12 @@ function createRecurringTask(task) {
         .catch(error => console.error('Error creating recurring task:', error));
 }
 
+function toggleSortingPreference() {
+    isDescending = !isDescending; // Toggle the sort order
+    setSortingPreference(isDescending); // Save the preference to localStorage
+    getQuests(false); // Rerender the quests with the new sorting order
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Get references to modal and form elements
     const newQuestButton = document.getElementById('new-quest-btn');
@@ -296,6 +300,24 @@ document.addEventListener("DOMContentLoaded", () => {
     applyNewQuestButton.addEventListener('click', function () {
         // Get the values from the modal form       
     });
+
+    const sortAscendingButton = document.getElementById('sort-ascending');
+    const sortDescendingButton = document.getElementById('sort-descending');
+
+    // Event listener for sorting in ascending order
+    sortAscendingButton.addEventListener('click', () => {
+        isDescending = false; // Set sort order to ascending
+        setSortingPreference(isDescending); // Save preference in localStorage
+        getQuests(false); // Re-render quests with ascending order
+    });
+
+    // Event listener for sorting in descending order
+    sortDescendingButton.addEventListener('click', () => {
+        isDescending = true; // Set sort order to descending
+        setSortingPreference(isDescending); // Save preference in localStorage
+        getQuests(false); // Re-render quests with descending order
+    });
+
 
     getQuests(false);
 
