@@ -21,198 +21,203 @@ function getQuests(importantFilter, searchQuery = '') {
     fetch(`http://localhost:8080/api/index?sort=${sortParam}&importantFilter=${importantFilter}&search=${encodeURIComponent(searchQuery)}`)
         .then(response => response.json())
         .then(quests => {
-            console.log(quests);
             const questContainerMain = document.getElementById("quest-container");
             questContainerMain.innerHTML = ''; // Clear existing tasks
 
-            quests.forEach((quest, index) => {
-                const displayId = isDescending ? quests.length - index : index + 1;
+            // Filter out completed tasks before rendering
+            quests
+                .filter(quest => !quest.completed) // Exclude completed tasks
+                .forEach((quest, index) => {
+                    const displayId = isDescending ? quests.length - index : index + 1;
 
-                // Create quest container
-                const questContainer = document.createElement("div");
-                questContainer.className = "quest-container";
+                    // Create quest container
+                    const questContainer = document.createElement("div");
+                    questContainer.className = "quest-container";
 
-                const questDesc = document.createElement("div");
-                questDesc.className = "quest-desc fs-6";
-                questDesc.innerHTML = `${displayId}. ${quest.description}`;
+                    const questDesc = document.createElement("div");
+                    questDesc.className = "quest-desc fs-6";
+                    questDesc.innerHTML = `${displayId}. ${quest.description}`;
 
-                if (quest.important) {
-                    const importantBadge = document.createElement("span");
-                    importantBadge.className = "badge bg-warning text-dark ms-2";
-                    importantBadge.innerText = "Important";
-                    questDesc.appendChild(importantBadge);
-                }
-
-                // Add repeat information (if available)
-                if (quest.repeatable) {
-                    const repeatInfo = document.createElement("div");
-                    repeatInfo.className = "fs-6 text-secondary mt-1";
-
-                    const repeatDays = quest.repeatDays ? quest.repeatDays.split(',').join(', ') : 'No specific days';
-                    const repeatTime = quest.repeatTime || 'No specific time';
-
-                    repeatInfo.innerHTML = `Repeats on: <strong>${repeatDays}</strong> at <strong>${repeatTime}</strong>`;
-                    questDesc.appendChild(repeatInfo);
-                }
-
-                if (quest.imageUrl) {
-                    const questImage = document.createElement("img");
-                    questImage.className = "quest-image img-fluid";
-                    questImage.src = quest.imageUrl;
-                    questImage.alt = "Quest Image";
-                    questContainer.appendChild(questImage);
-                }
-
-                if (quest.completed) {
-                    const completedBadge = document.createElement("span");
-                    completedBadge.className = "badge bg-success text-dark ms-2";
-                    completedBadge.innerText = "Completed";
-                    questDesc.appendChild(completedBadge);
-                }
-
-                // Create checkbox to mark task as completed
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.className = "form-check-input me-3";
-                checkbox.checked = quest.completed;
-
-                // Add checkbox functionality
-                checkbox.addEventListener("change", function () {
-                    if (checkbox.checked) {
-                        markTaskCompleted(quest, questContainer);
+                    // Add "Important" badge
+                    if (quest.important) {
+                        const importantBadge = document.createElement("span");
+                        importantBadge.className = "badge bg-warning text-dark ms-2";
+                        importantBadge.innerText = "Important";
+                        questDesc.appendChild(importantBadge);
                     }
+
+                    // Add repeat information for repeatable tasks
+                    if (quest.repeatable) {
+                        const repeatInfo = document.createElement("div");
+                        repeatInfo.className = "fs-6 text-secondary mt-1";
+
+                        const repeatDays = quest.repeatDays ? quest.repeatDays.split(',').join(', ') : 'No specific days';
+                        const repeatTime = quest.repeatTime || 'No specific time';
+
+                        repeatInfo.innerHTML = `Repeats on: <strong>${repeatDays}</strong> at <strong>${repeatTime}</strong>`;
+                        questDesc.appendChild(repeatInfo);
+                    }
+
+                    // Add image (if available)
+                    if (quest.imageUrl) {
+                        const questImage = document.createElement("img");
+                        questImage.className = "quest-image img-fluid";
+                        questImage.src = quest.imageUrl;
+                        questImage.alt = "Quest Image";
+                        questContainer.appendChild(questImage);
+                    }
+
+                    // Add "Completed" badge
+                    if (quest.completed) {
+                        const completedBadge = document.createElement("span");
+                        completedBadge.className = "badge bg-success text-dark ms-2";
+                        completedBadge.innerText = "Completed";
+                        questDesc.appendChild(completedBadge);
+                    }
+
+                    // Add checkbox for marking task as completed
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "form-check-input me-3";
+                    checkbox.checked = quest.completed;
+                    checkbox.id = `checkbox-${quest.id}`;
+
+                    const label = document.createElement("label");
+                    label.htmlFor = `checkbox-${quest.id}`; // Associate the label with the checkbox
+                    label.className = "form-check-label"; // Optional: Add a class for styling
+                    label.innerText = "Mark as completed";
+
+
+                    checkbox.addEventListener("change", function () {
+                        if (checkbox.checked) {
+                            markTaskCompleted(quest, questContainer);
+                        }
+                    });
+
+                    // Add Edit/Delete buttons
+                    const editDeleteContainer = document.createElement("div");
+                    editDeleteContainer.className = "d-flex justify-content-end";
+
+                    const editQuestButton = document.createElement("button");
+                    editQuestButton.className = "btn btn-outline-warning edit-btn";
+                    editQuestButton.innerHTML = "Edit Quest";
+
+                    // Edit button functionality
+                    editQuestButton.addEventListener('click', function () {
+                        document.getElementById('editQuestDescription').value = quest.description;
+                        document.getElementById('editQuestImportant').checked = quest.important;
+
+                        // Disable recurrence fields for editing
+                        const daysCheckboxes = document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input');
+                        daysCheckboxes.forEach((checkbox) => {
+                            checkbox.disabled = true; // Disable recurrence checkboxes
+                        });
+
+                        const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
+                        editQuestModal.show();
+
+                        const applyButton = document.getElementById('applyEditQuest');
+                        applyButton.onclick = function () {
+                            const newDescription = document.getElementById('editQuestDescription').value.trim();
+                            const isImportant = document.getElementById('editQuestImportant').checked;
+
+                            if (!newDescription) {
+                                alert('Description cannot be empty.');
+                                return;
+                            }
+
+                            const updatedQuest = {
+                                id: quest.id,
+                                description: newDescription,
+                                important: isImportant,
+                                repeatable: quest.repeatable,
+                                repeatDays: quest.repeatDays,
+                                repeatTime: quest.repeatTime,
+                            };
+
+                            // Send updated quest to the backend
+                            fetch(`http://localhost:8080/api/index/${quest.id}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(updatedQuest),
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`Failed to update quest with ID: ${quest.id}`);
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('Updated quest data from server:', data);
+                                    location.reload(); // Reload the page to show updated tasks
+                                })
+                                .catch(error => {
+                                    console.error('Error updating quest:', error);
+                                });
+                        };
+                    });
+
+                    const deleteQuestButton = document.createElement("button");
+                    deleteQuestButton.className = "btn btn-outline-secondary delete-btn";
+                    const redCross = document.createElement("img");
+                    redCross.src = "/images/9c6cd7076c9be69e66174619f8f63e3d.png";
+                    redCross.className = "red-cross";
+                    deleteQuestButton.appendChild(redCross);
+
+                    deleteQuestButton.addEventListener('click', function () {
+                        deleteQuest(quest.id, questContainer);
+                    });
+
+                    editDeleteContainer.appendChild(editQuestButton);
+                    editDeleteContainer.appendChild(deleteQuestButton);
+
+                    questContainer.appendChild(checkbox);
+                    questContainer.appendChild(label);
+                    questContainer.appendChild(questDesc);
+                    questContainer.appendChild(editDeleteContainer);
+
+                    questContainerMain.appendChild(questContainer);
                 });
-
-                // Edit/Delete functionality (keep the edit section intact)
-                const editDeleteContainer = document.createElement("div");
-                editDeleteContainer.className = "d-flex justify-content-end";
-
-                const editQuestButton = document.createElement("button");
-                editQuestButton.className = "btn btn-outline-warning edit-btn";
-                editQuestButton.innerHTML = "Edit Quest";
-
-                // Edit button functionality
-editQuestButton.addEventListener('click', function () {
-    document.getElementById('editQuestDescription').value = quest.description;
-    document.getElementById('editQuestImportant').checked = quest.important;
-    document.getElementById('editQuestCompleted').checked = quest.completed;
-
-    // Disabling the recurrence fields so they can't be edited
-    const daysCheckboxes = document.querySelectorAll('#editQuestDaysCheckboxGroup .form-check-input');
-    daysCheckboxes.forEach((checkbox) => {
-        checkbox.disabled = true; // Disable recurrence checkboxes
-    });
-
-    const editQuestModal = new bootstrap.Modal(document.getElementById('editQuestModal'));
-    editQuestModal.show();
-
-    const applyButton = document.getElementById('applyEditQuest');
-    applyButton.onclick = function () {
-        const newDescription = document.getElementById('editQuestDescription').value.trim();
-        const isImportant = document.getElementById('editQuestImportant').checked;
-        const isCompleted = document.getElementById('editQuestCompleted').checked;
-
-        if (!newDescription) {
-            alert('Description cannot be empty.');
-            return;
-        }
-
-        // Prepare the updated task object without updating the recurrence (keep original)
-        const updatedQuest = {
-            id: quest.id,
-            description: newDescription,
-            important: isImportant,
-            completed: isCompleted,
-            repeatable: quest.repeatable,  // Don't modify recurrence
-            repeatDays: quest.repeatDays,  // Keep original recurrence days
-            repeatTime: quest.repeatTime,  // Keep original recurrence time
-        };
-
-        // Send the updated task to the backend
-        fetch(`http://localhost:8080/api/index/${quest.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedQuest),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed to update quest with ID: ${quest.id}`);
-                }
-                return response.json(); // Parse the JSON response
-            })
-            .then(data => {
-                console.log('Updated quest data from server:', data);
-                location.reload(); // Reload the page to show updated tasks
-            })
-            .catch(error => {
-                console.error('Error updating quest:', error);
-            });
-    };
-});
-
-
-                const deleteQuestButton = document.createElement("button");
-                deleteQuestButton.className = "btn btn-outline-secondary delete-btn";
-                const redCross = document.createElement("img");
-                redCross.src = "/images/9c6cd7076c9be69e66174619f8f63e3d.png";
-                redCross.className = "red-cross";
-                deleteQuestButton.appendChild(redCross);
-
-                deleteQuestButton.addEventListener('click', function () {
-                    deleteQuest(quest.id, questContainer);
-                });
-
-                editDeleteContainer.appendChild(editQuestButton);
-                editDeleteContainer.appendChild(deleteQuestButton);
-
-                questContainer.appendChild(checkbox);
-                questContainer.appendChild(questDesc);
-                questContainer.appendChild(editDeleteContainer);
-
-                questContainerMain.appendChild(questContainer);
-
-                
-            });
         })
         .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
 
+
 // Function to mark task as completed and save it to localStorage
 function markTaskCompleted(task, taskContainer) {
-    const updatedTask = {
-        ...task,
-        completed: true,
-    };
+    // Update the task as completed in the database
+    const updatedTask = { ...task, completed: true };
 
-    // Remove the task from the database (delete it)
     fetch(`http://localhost:8080/api/index/${task.id}`, {
-        method: 'DELETE',
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTask),
     })
         .then(response => {
-            if (!response.ok) throw new Error('Failed to delete task from the database');
-            console.log(`Task with ID ${task.id} deleted from database.`);
+            if (!response.ok) {
+                throw new Error(`Failed to mark task as completed in the database`);
+            }
+            console.log(`Task ${task.id} marked as completed.`);
         })
-        .catch(error => console.error('Error deleting task:', error));
+        .catch(error => console.error('Error updating task:', error));
 
-    // Save the task's recurrence info in localStorage with its next recurrence time
+    // Remove task from the UI
+    taskContainer.remove();
+
+    // Save the task in localStorage with the next occurrence time
     const taskWithRecurrence = { ...task, nextOccurrence: getNextOccurrenceTime(task) };
     localStorage.setItem(`task-${task.id}`, JSON.stringify(taskWithRecurrence));
 
-    taskContainer.remove(); // Remove task from the UI
-
-    // Automatically recreate the task at the next recurrence
-    setTimeout(() => {
-        const taskFromStorage = JSON.parse(localStorage.getItem(`task-${task.id}`));
-        if (taskFromStorage) {
-            createRecurringTask(taskFromStorage); // Create the task in the database
-        }
-    }, taskWithRecurrence.nextOccurrence - Date.now());
+    // Schedule task reappearance
+    scheduleTaskReappearance(taskWithRecurrence);
 }
+
 
 // Function to get the next occurrence time for the task
 function getNextOccurrenceTime(task) {
     const now = new Date();
     const taskTime = new Date();
+
     const [hour, minute] = task.repeatTime.split(':');
     taskTime.setHours(hour);
     taskTime.setMinutes(minute);
@@ -220,42 +225,51 @@ function getNextOccurrenceTime(task) {
 
     const repeatDays = task.repeatDays.split(',');
     const repeatDayMap = {
-        'sunday': 0,
-        'monday': 1,
-        'tuesday': 2,
-        'wednesday': 3,
-        'thursday': 4,
-        'friday': 5,
-        'saturday': 6
+        sunday: 0,
+        monday: 1,
+        tuesday: 2,
+        wednesday: 3,
+        thursday: 4,
+        friday: 5,
+        saturday: 6,
     };
 
-    // Find the next scheduled occurrence day
-    let nextOccurrenceDay = repeatDayMap[repeatDays[0].toLowerCase()];
-    taskTime.setDate(now.getDate() + ((nextOccurrenceDay - now.getDay() + 7) % 7));
+    // Find the next repeat day
+    let nextDay = repeatDays
+        .map(day => repeatDayMap[day.toLowerCase()])
+        .find(day => (day + 7 - now.getDay()) % 7 > 0);
 
-    return taskTime.getTime(); // Return the time in milliseconds
+    if (nextDay === undefined) {
+        nextDay = repeatDayMap[repeatDays[0].toLowerCase()];
+    }
+
+    const daysUntilNext = (nextDay + 7 - now.getDay()) % 7;
+    taskTime.setDate(now.getDate() + daysUntilNext);
+
+    return taskTime.getTime(); // Return the timestamp for the next occurrence
 }
 
-// Function to create a new recurring task in the database
-function createRecurringTask(task) {
-    fetch('http://localhost:8080/api/index', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task),
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Recurring task created:', data);
-            // Fetch the task again and display it
-            getQuests(false);
-        })
-        .catch(error => console.error('Error creating recurring task:', error));
-}
+function scheduleTaskReappearance(task) {
+    const timeUntilNextOccurrence = task.nextOccurrence - Date.now();
 
-function toggleSortingPreference() {
-    isDescending = !isDescending; // Toggle the sort order
-    setSortingPreference(isDescending); // Save the preference to localStorage
-    getQuests(false); // Rerender the quests with the new sorting order
+    setTimeout(() => {
+        const storedTask = JSON.parse(localStorage.getItem(`task-${task.id}`));
+        if (storedTask) {
+            // Re-add the task to the database
+            fetch('http://localhost:8080/api/index', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(storedTask),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`Recurring task ${data.id} reappeared.`);
+                    localStorage.removeItem(`task-${task.id}`); // Clean up localStorage
+                    getQuests(false); // Refresh tasks in the UI
+                })
+                .catch(error => console.error('Error recreating task:', error));
+        }
+    }, timeUntilNextOccurrence);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
