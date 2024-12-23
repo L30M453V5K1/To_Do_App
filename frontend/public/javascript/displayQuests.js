@@ -24,15 +24,19 @@ function getQuests(importantFilter, searchQuery = '') {
             const questContainerMain = document.getElementById("quest-container");
             questContainerMain.innerHTML = ''; // Clear existing tasks
 
+            // Sort quests based on ID before rendering
+            quests.sort((a, b) => isDescending ? b.id - a.id : a.id - b.id);
+
             // Filter out completed tasks before rendering
             quests
                 .filter(quest => !quest.completed) // Exclude completed tasks
                 .forEach((quest, index) => {
-                    const displayId = isDescending ? quests.length - index : index + 1;
+                    const displayId = index + 1; // Now displayId is just the index + 1, as the array is sorted
 
                     // Create quest container
                     const questContainer = document.createElement("div");
                     questContainer.className = "quest-container";
+                    questContainer.setAttribute("data-id", quest.id);
 
                     const questDesc = document.createElement("div");
                     questDesc.className = "quest-desc fs-6";
@@ -86,7 +90,6 @@ function getQuests(importantFilter, searchQuery = '') {
                     label.htmlFor = `checkbox-${quest.id}`; // Associate the label with the checkbox
                     label.className = "form-check-label"; // Optional: Add a class for styling
                     label.innerText = "Mark as completed";
-
 
                     checkbox.addEventListener("change", function () {
                         if (checkbox.checked) {
@@ -181,6 +184,7 @@ function getQuests(importantFilter, searchQuery = '') {
         })
         .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
+
 
 
 // Function to mark task as completed and save it to localStorage
