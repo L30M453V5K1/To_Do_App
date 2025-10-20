@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface QuestService {
 
-    List<Quest> getAllQuests(String sort, boolean importantFilter, String search);  // Added search parameter
+    List<Quest> getAllQuests(String sort, boolean includeCompleted, String search);
     Quest createQuest(Quest quest);
     Quest updateQuest(int id, Quest newQuest) throws Exception;
     void deleteQuest(int id) throws Exception;
