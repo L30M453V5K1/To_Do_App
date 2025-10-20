@@ -188,4 +188,35 @@ These new features enhance task management by allowing users to prioritize impor
   - Confirm that the completion status indicator updates correctly.
 
 ---
-.
+
+## Unit Tests
+
+### QuestControllerTest
+
+| Test Name                                           | Inputs                         | Outputs                            | Scenario        |
+| --------------------------------------------------- | ------------------------------ | ---------------------------------- | --------------- |
+| testBrowserMessage_ReturnsCorrectApiResponse        | None                           | Returns static success message     | Positive        |
+| testGetAllQuests_ReturnsListOfQuests                | Mocked quest list              | List of quests with correct fields | Positive        |
+| testGetAllQuests_NoQuestsFound                      | Empty quest list               | Empty list returned                | Positive (edge) |
+| testAddQuest_SuccessfulCreation                     | Valid quest object             | Created quest returned             | Positive        |
+| testAddQuest_WithInvalidQuest_DoesNotThrowException | Invalid quest data             | Quest returned without exception   | Positive (edge) |
+| testUpdateQuest_Success                             | Valid quest ID and update data | Updated quest returned             | Positive        |
+| testUpdateQuest_QuestNotFound                       | Non-existing quest ID          | Exception “Quest not found”        | Negative        |
+| testDeleteQuest_Success                             | Valid quest ID                 | Success message returned           | Positive        |
+| testDeleteQuest_QuestNotFound                       | Non-existing quest ID          | Exception “Quest not found”        | Negative        |
+
+### QuestServiceImplTest
+
+| Test Name                         | Inputs                     | Outputs                     | Scenario        |
+| --------------------------------- | -------------------------- | --------------------------- | --------------- |
+| testGetAllQuests_ReturnEmptyList  | Empty repository           | Empty list returned         | Positive (edge) |
+| testGetAllQuests_NullFilters      | Null sort and filters      | All quests returned         | Positive        |
+| testGetAllQuests_DefaultSortOrder | Unsorted quests            | Sorted ascending by ID      | Positive        |
+| testGetQuestById_Success          | Existing quest ID          | Quest returned              | Positive        |
+| testGetQuestById_NotFound         | Non-existing quest ID      | Exception “Quest not found” | Negative        |
+| testUpdateQuest_PartialUpdate     | Partial quest update       | Quest updated correctly     | Positive        |
+| testCreateQuest_NullRepeatDays    | Quest with null repeatDays | Quest created successfully  | Positive        |
+| testDeleteQuest_InvalidId         | Non-existing ID            | Exception “Quest not found” | Negative        |
+| testGetAllQuests_MultipleFilters  | Search term “princess”     | One filtered quest returned | Positive        |
+| testUpdateQuest_InvalidData       | Null description           | Validation exception thrown | Negative        |
+
