@@ -14,7 +14,7 @@
 
 **Scenarij testa:**
 
-* Simuliral sem obremenitev backend sistema s 20 sočasnimi uporabniki (**threads**)
+* Simulirali sva obremenitev backend sistema s 20 sočasnimi uporabniki (**threads**)
 * Ramp-up perioda: 5 sekund (uporabniki so se postopoma priključili)
 * Vsak uporabnik je izvedel 10 ponovitev (**loop count = 10**)
 * Skupno je bilo izvedenih 400 zahtev (20 uporabnikov × 10 ponovitev × 2 endpointa)
