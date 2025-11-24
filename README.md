@@ -285,11 +285,3 @@ npx cypress run
 - Spring Boot REST backend
 
 ---
-
-## 📝 Notes
-These tests rely on real backend data.  
-Ensure **Spring Boot is running on `localhost:8080`** before running the tests.
-
-To modify target URLs, change them in the individual test specs.
-
----
