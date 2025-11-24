@@ -19,7 +19,7 @@ public class Quest {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)

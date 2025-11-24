@@ -30,8 +30,8 @@ function getQuests(importantFilter, searchQuery = '') {
             // Filter out completed tasks before rendering
             quests
                 .filter(quest => !quest.completed) // Exclude completed tasks
-                .forEach((quest, index) => {
-                    const displayId = index + 1; // Now displayId is just the index + 1, as the array is sorted
+                .forEach((quest) => {
+                    const displayId = quest.id;  // Now displayId is just the index + 1, as the array is sorted
 
                     // Create quest container
                     const questContainer = document.createElement("div");
