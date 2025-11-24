@@ -220,3 +220,76 @@ These new features enhance task management by allowing users to prioritize impor
 | testGetAllQuests_MultipleFilters  | Search term “princess”     | One filtered quest returned | Positive        |
 | testUpdateQuest_InvalidData       | Null description           | Validation exception thrown | Negative        |
 
+# Cypress End‑to‑End Tests for Quest App 
+
+This project uses **Cypress** to test a Vanilla JS frontend with a Spring Boot backend.
+
+## 📦 Setup
+
+### 1. Install dependencies
+```bash
+npm install
+```
+
+### 2. Open Cypress
+```bash
+npx cypress open
+```
+
+This launches the Cypress UI where you can run tests interactively.
+
+---
+
+## 🧪 Test Coverage
+
+### ✔ Create Quest  
+Ensures that creating a new quest through the modal works and the backend responds correctly.
+
+### ✔ Edit Quest  
+Tests editing an existing quest, validating user input, PUT requests, and UI updates.
+
+### ✔ Delete Quest  
+Confirms deletion triggers a correct DELETE request and removes the quest element.
+
+### ✔ Search Quests  
+Verifies the search input filters quests by description.
+
+### ✔ Sort Descending  
+Ensures sorting by descending order correctly arranges quests by their real IDs.
+
+---
+
+## 📁 Test Location
+
+All tests are located in:
+
+```
+cypress/e2e/
+```
+
+Each test file has the `.cy.js` extension.
+
+---
+
+## ▶ Running Cypress in headless mode
+
+```bash
+npx cypress run
+```
+
+---
+
+## 🏗 Tech Used
+- Cypress 13+
+- Vanilla JavaScript frontend
+- Spring Boot REST backend
+
+---
+
+## 📝 Notes
+These tests rely on real backend data.  
+Ensure **Spring Boot is running on `localhost:8080`** before running the tests.
+
+To modify target URLs, change them in the individual test specs.
+
+---
