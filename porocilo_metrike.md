@@ -55,9 +55,9 @@ Za projekt **To Do App** smo izvedli analizo kode tako za **frontend** kot **bac
 
 | Kompleksnost | Število funkcij | Barva |
 |--------------|----------------|-------|
-| Visoka       | 3              | Rdeča |
-| Srednja      | 5              | Rumena|
-| Nizka       | 7              | Zelena|
+| Visoka       | 9              | Rdeča |
+| Srednja      | 6              | Rumena|
+| Nizka       | 3              | Zelena|
 
 - Funkcije z rdečo barvo so potencialno težavne za vzdrževanje in testiranje
 
@@ -65,11 +65,10 @@ Za projekt **To Do App** smo izvedli analizo kode tako za **frontend** kot **bac
 
 ### **Backend – MetricsReloaded**
 
-| Razred               | LOC | Metode | Cyclomatic Complexity | Opomba              |
-|---------------------|-----|--------|---------------------|--------------------|
-| TaskController       | 120 | 6      | 4-7                 | Normalna kompleksnost |
-| TaskService          | 150 | 8      | 5-10                | Nekaj kompleksnejših metod |
-| UserRepository       | 80  | 4      | 2-3                 | Nizka kompleksnost |
+| Razred               | LOC | Reliability Rating | Security Rating |
+|---------------------|-----|--------|---------------------|
+| QuestController       | 41 | A      | A                 |
+| QuestServiceImpl          | 64 | A      | A                |
 
 - Omogoča hitro identifikacijo razredov, ki bi zahtevali dodatno testiranje ali refaktoriranje
 
