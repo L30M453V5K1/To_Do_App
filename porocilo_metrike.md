@@ -8,7 +8,7 @@ Za projekt **To Do App** smo izvedli analizo kode tako za **frontend** kot **bac
 
 ## 2. Metode analize
 
-### **1️⃣ CodeMetrics (VSCode – frontend, Vanilla JavaScript)**
+### **1. CodeMetrics (VSCode – frontend, Vanilla JavaScript)**
 
 - **Kaj počne:**
   - Izračuna **kompleksnost posameznih funkcij**
@@ -20,7 +20,7 @@ Za projekt **To Do App** smo izvedli analizo kode tako za **frontend** kot **bac
 
 ---
 
-### **2️⃣ MetricsReloaded (IntelliJ IDEA – backend, Java)**
+### **2. MetricsReloaded (IntelliJ IDEA – backend, Java)**
 
 - **Kaj počne:**
   - Tabelarno analizira **razrede in metode**
@@ -32,7 +32,7 @@ Za projekt **To Do App** smo izvedli analizo kode tako za **frontend** kot **bac
 
 ---
 
-### **3️⃣ SonarQube (SonarScanner + SonarQube server)**
+### **3. SonarQube (SonarScanner + SonarQube server)**
 
 - **Kaj počne:**
   - Celovita analiza backend kode
