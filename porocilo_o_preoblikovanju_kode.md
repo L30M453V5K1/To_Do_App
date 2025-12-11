@@ -12,7 +12,7 @@ utemeljitev.
 Razred *scheduler* ni sledil Java konvenciji za poimenovanje
 (PascalCase). Zato sva izvedla:
 
-👉 **Refactoring Rename Class: `scheduler → Scheduler`**
+**Refactoring Rename Class: `scheduler → Scheduler`**
 
 ## 2. Refaktoring: Zamenjava `System.out.println` z Loggerjem
 
@@ -71,3 +71,10 @@ ki prepreči podvajanje logike kopiranja quest-ov.
 
 Z izvedenimi refaktoringi sva izboljšala: - berljivost, - vzdrževanje, -
 modularnost, - skladnost s PMD pravili.
+
+PMD okno z analizo pred preoblikovanja:
+<img width="1732" height="815" alt="pmd_analiza_pred" src="https://github.com/user-attachments/assets/6b4e2f7a-0e6c-4cb5-9a8a-61416f96ef0f" />
+
+PMD okno z analizo po preoblikovanja:
+<img width="1607" height="243" alt="pmd_analiza_posle" src="https://github.com/user-attachments/assets/66ed1a80-fe79-4587-be46-6346cdc0ceef" />
+
